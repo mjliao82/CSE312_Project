@@ -3,9 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Page</title>
+    <title>Feet and fits</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        height: 100vh;
+      }
+      .blue-header {
+        background-color: lightblue;
+        color: black;
+        text-align: center;
+        justify-content: center;
+        padding: 30px; 
+        flex: 2;
+      }
+      .middle {
+        background-color: white;
+        color: black;
+        flex: 6;
+      }
+
+      .blue-footer {
+        background-color: lightblue;
+        color: black;
+        flex: 2;
+      }
+
+      .logout {
+        background-color: cornsilk;
+        color: lightblue;
+        cursor: pointer;
+        margin-left: auto;
+        border-radius: 5px;
+      }
+
+      .cursive-italic {
+        font-style: italic;
+      }
+    </style>
   </head>
   <body>
-    <h5>Eddy's page</h5>
+    <div class="blue-header">
+      <p>
+        Welcome to Feet and Fits!
+      </p>
+      <button class="logout"></button>   
+    </div>
+    <div class="middle">
+      fits go here
+    </div>
+    <div class="blue-footer">
+      Footer info goes here
+    </div>
   </body>
 </html>
