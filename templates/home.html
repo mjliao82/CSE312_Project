@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Feet and fits</title>
+    <title>Tic Tac Toe</title>
     <style>
       body {
         margin: 0;
@@ -39,20 +39,32 @@
         border-radius: 5px;
       }
 
-      .cursive-italic {
-        font-style: italic;
+      .grid {
+        color: black
       }
+
+      .square {
+        color: white 
+      }
+      
+
     </style>
   </head>
   <body>
     <div class="blue-header">
       <p>
-        Welcome to Feet and Fits!
+        Tic Tac Toe!
       </p>
       <button class="logout"></button>   
     </div>
     <div class="middle">
-      fits go here
+      <div class = 'grid'>
+        <div id = "block1" class="square"></div> <div id = "block2" class="square"></div> <div id = "block3" class="square"></div>
+
+        <div id = "block4" class="square"></div> <div id = "block5" class="square"></div> <div id = "block6" class="square"></div>
+
+        <div id = "block7" class="square"></div> <div id = "block8" class="square"></div> <div id = "block9" class="square"></div>
+      </div>
     </div>
     <div class="blue-footer">
       Footer info goes here
