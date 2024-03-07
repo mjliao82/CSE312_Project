@@ -1,16 +1,30 @@
 import datetime
 import json
 import authenticity
-from flask import Flask, send_from_directory, render_template, request, make_response
+from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 socket_server = SocketIO(app)
 
 
+# Upon site entry, if the user still has their non-expired token, they will be
+# automatically logged into the homepage, otherwise back to login.
 @app.route("/")
-def homepage():
+def landing_page():
+    token = request.cookies.get('token')
+    if token and authenticity.user_authenticated(token):
+        response = make_response(redirect('/home'))
+        expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
+        response.set_cookie('token', token, max_age=3600, httponly=True, expires=expiration)
+        return response
     return render_template("index.html")
+
+
+@app.route('/home')
+def homepage():
+    response = make_response(render_template("home.html"))
+    return response
 
 
 @app.route('/register', methods=["POST"])
@@ -23,17 +37,28 @@ def register():
     return response
 
 
+# Creates a token that expires after an hour after successful login.
+# This token will keep them logged in everytime they visit the base site,
+# until they click logout.
 @app.route("/login", methods=['POST'])
 def login():
-    response = make_response(render_template("index.html"))
+    response = make_response(redirect('/'))
     username = request.form['username_login']
     password = request.form["password_login"]
     result = authenticity.user_login(username, password)
     expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
     if result[0]:
-        response.set_cookie('token', result[1], max_age=3600, httponly=True, expires=expiration)
+        response2 = make_response(redirect('/home'))
+        response2.set_cookie('token', result[1], max_age=3600, httponly=True, expires=expiration)
+        return response2
     return response
 
+
+@app.route("/logout", methods=['POST'])
+def logout():
+    response = make_response(redirect('/'))
+    response.delete_cookie('token')
+    return response
 
 
 if __name__ == '__main__':

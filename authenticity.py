@@ -12,6 +12,17 @@ user_collection = db["users"]
 token_collection = db["tokens"]
 
 
+# Checks to see if the user has their token in the database
+def user_authenticated(token):
+    sha256 = hashlib.sha256()
+    sha256.update(token.encode("utf-8"))
+    user_info = token_collection.find_one({'token': sha256.hexdigest()})
+    if user_info:
+        return True
+    else:
+        return False
+
+
 def user_registration(username, password, confirm_password):
     valid = check_password(password)
     username_fixed = html.escape(username)
@@ -22,6 +33,8 @@ def user_registration(username, password, confirm_password):
     return
 
 
+# Checking for a successful login. If the login is correct, will return a 2
+# element list containing a boolean and their token, otherwise false and empty.
 def user_login(username, password):
     user_info = user_collection.find_one({'username': username})
     if user_info:
