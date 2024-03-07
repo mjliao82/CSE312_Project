@@ -29,7 +29,7 @@ def homepage():
 
 @app.route('/register', methods=["POST"])
 def register():
-    response = make_response(render_template("index.html"))
+    response = make_response(redirect('/'))
     username = request.form['username_reg']
     password = request.form["password_reg"]
     confirm_password = request.form["password_reg_2"]
