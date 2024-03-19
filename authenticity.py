@@ -11,6 +11,14 @@ user_collection = db["users"]
 token_collection = db["tokens"]
 
 
+# Checks if a user registers with a taken username
+def user_duplicates(username):
+    username_taken = user_collection.find_one({'username': username})
+    if username_taken:
+        return False
+    else:
+        return True
+
 # Checks to see if the user has their token in the database
 def user_authenticated(token):
     sha256 = hashlib.sha256()
