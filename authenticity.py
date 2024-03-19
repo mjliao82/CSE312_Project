@@ -56,6 +56,11 @@ def user_login(username, password):
     return [False, '']
 
 
+# Deletes user token when they logout
+def user_logout(token):
+    token_collection.delete_one({'token': token})
+    return
+    
 # Helper Functions
 
 def check_password(password):

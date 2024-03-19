@@ -52,6 +52,7 @@ def register():
 @app.route("/login", methods=['POST'])
 def login():
     response = make_response(redirect('/'))
+    print(request.form)
     username = request.form['username_login']
     password = request.form["password_login"]
     result = authenticity.user_login(username, password)
@@ -67,6 +68,8 @@ def login():
 def logout():
     response = make_response(redirect('/'))
     response.delete_cookie('token')
+    # username = request.form['username_login']
+    # authenticity.user_logout(username)
     return response
 
 
