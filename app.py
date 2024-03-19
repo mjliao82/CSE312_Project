@@ -30,6 +30,14 @@ def serve_logCSS():
     response.headers["X-Content-Type-Options"] = 'nosniff'
     return response
 
+
+@app.route('/static/yo.jpg')
+def serve_logCSS():
+    response = make_response(send_from_directory('static', 'yo.jpg'))
+    response.headers["X-Content-Type-Options"] = 'nosniff'
+    return response
+
+
 @app.route('/home')
 def homepage():
     response = make_response(render_template("home.html"))
