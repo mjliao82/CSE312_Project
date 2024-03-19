@@ -2,13 +2,12 @@
 import hashlib
 import html
 import secrets
-
 import bcrypt
 from pymongo import MongoClient
 
 mongo_client = MongoClient("mongo")
 db = mongo_client["cse312_group"]
-user_collection = db["users"] #contains {username, password, salt}
+user_collection = db["users"]
 token_collection = db["tokens"]
 
 
@@ -23,8 +22,6 @@ def user_authenticated(token):
         return False
 
 
-# Checking if registered password is valid and if password
-# and confirm password are the same
 def user_registration(username, password, confirm_password):
     valid = check_password(password)
     username_fixed = html.escape(username)

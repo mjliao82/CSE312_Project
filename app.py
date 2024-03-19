@@ -15,11 +15,20 @@ def landing_page():
     token = request.cookies.get('token')
     if token and authenticity.user_authenticated(token):
         response = make_response(redirect('/home'))
+        response.headers["X-Content-Type-Options"] = 'nosniff'
         expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
         response.set_cookie('token', token, max_age=3600, httponly=True, expires=expiration)
         return response
-    return render_template("index.html")
+    response = make_response(render_template("index.html"))
+    response.headers["X-Content-Type-Options"] = 'nosniff'
+    return response
 
+
+@app.route('/static/login.css')
+def serve_logCSS():
+    response = make_response(send_from_directory('static', 'login.css'))
+    response.headers["X-Content-Type-Options"] = 'nosniff'
+    return response
 
 @app.route('/home')
 def homepage():
