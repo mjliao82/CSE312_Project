@@ -2,7 +2,7 @@ import datetime
 import json
 import authenticity
 import requests
-from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for
+from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
@@ -54,11 +54,11 @@ def register():
     authenticity.user_registration(username, password, confirm_password)
     return response
 
-
+user = ''
 # Creates a token that expires after an hour after successful login.
 # This token will keep them logged in everytime they visit the base site,
 # until they click logout.
-@app.route("/login", methods=['POST', 'GET'])
+@app.route("/login", methods=['POST'])
 def login():
     response = make_response(redirect('/'))
     username = request.form['username_login']
@@ -69,11 +69,18 @@ def login():
     if result[0]: #user is valid 
         response2 = make_response(redirect('/home'))
         response2.set_cookie('token', result[1], max_age=3600, httponly=True, expires=expiration)
-        json.dumps(username)
-        # print(json.loads(username))
+        global user
+        user = username
         return response2
     return response
 
+# New endpoint to display username on frontend
+@app.route("/get-username")
+def get_username():
+    if user != '':
+        return jsonify(user)
+    else:
+        return jsonify(error='User not logged in'), 401
 
 @app.route("/logout", methods=['POST'])
 def logout():

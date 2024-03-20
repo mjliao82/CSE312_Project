@@ -7,6 +7,14 @@ function display() {
             document.getElementById("usernameHolder").innerHTML = username;
         }
     };
-    request.open("GET", "/home", true); 
+    request.open("GET", "/get-username", true); 
     request.send(); 
 }
+// function fetchData() {
+//     fetch('/login')
+//         .then(response => response.json())
+//         .then(data => {
+//             document.getElementById('data').textContent = JSON.stringify(data);
+//         })
+//         .catch(error => console.error('Error fetching data:', error));
+// }
