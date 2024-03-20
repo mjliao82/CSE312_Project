@@ -1,6 +1,7 @@
 import datetime
 import json
 import authenticity
+import requests
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for
 from flask_socketio import SocketIO, emit
 
@@ -57,15 +58,17 @@ def register():
 # Creates a token that expires after an hour after successful login.
 # This token will keep them logged in everytime they visit the base site,
 # until they click logout.
-@app.route("/login", methods=['POST', "GET"])
+@app.route("/login", methods=['POST', 'GET'])
 def login():
     response = make_response(redirect('/'))
-    print(request.form)
     username = request.form['username_login']
     password = request.form["password_login"]
     result = authenticity.user_login(username, password)
     expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
     if result[0]:
+        req = requests.get('localhost:8080/home')
+        user_info = req.json()
+        print(user_info)
         response2 = make_response(redirect('/home'))
         response2.set_cookie('token', result[1], max_age=3600, httponly=True, expires=expiration)
         return response2
@@ -75,9 +78,10 @@ def login():
 @app.route("/logout", methods=['POST'])
 def logout():
     response = make_response(redirect('/'))
+    # token = request.get['token']
     response.delete_cookie('token')
-    # username = request.form['username_login']
-    # authenticity.user_logout(username)
+    
+    # authenticity.user_logout(token)
     return response
 
 

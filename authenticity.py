@@ -11,13 +11,6 @@ user_collection = db["users"]
 token_collection = db["tokens"]
 
 
-# Checks if a user registers with a taken username
-def user_duplicates(username):
-    username_taken = user_collection.find_one({'username': username})
-    if username_taken:
-        return False
-    else:
-        return True
 
 # Checks to see if the user has their token in the database
 def user_authenticated(token):
@@ -33,7 +26,8 @@ def user_authenticated(token):
 def user_registration(username, password, confirm_password):
     valid = check_password(password)
     username_fixed = html.escape(username)
-    if valid and password == confirm_password:
+    valid_username = user_duplicates(username)
+    if valid and valid_username == False and password == confirm_password:
         salt = bcrypt.gensalt()
         hashed_passwd = bcrypt.hashpw(password.encode("utf-8"), salt)
         user_collection.insert_one({'username': username_fixed, 'password': hashed_passwd, 'salt': salt})
@@ -58,7 +52,9 @@ def user_login(username, password):
 
 # Deletes user token when they logout
 def user_logout(token):
-    token_collection.delete_one({'token': token})
+    sha256 = hashlib.sha256()
+    sha256.update(token.encode('utf-8'))
+    token_collection.delete_one({'token': sha256.hexdigest()})
     return
     
 # Helper Functions
@@ -86,3 +82,12 @@ def check_password(password):
         else:
             not_invalid = False
     return lowercase and uppercase and contains_num and special_char and valid_length and not_invalid
+
+
+# Checks if a user registers with a taken username
+def user_duplicates(username):
+    username_taken = user_collection.find_one({'username': username})
+    if username_taken:
+        return True
+    else:
+        return False
