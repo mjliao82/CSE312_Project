@@ -4,3 +4,8 @@
     position: relative;
     top: 5px;
   }
+
+  .image {
+    max-width: 15%;
+    height: auto;
+}
