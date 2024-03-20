@@ -62,14 +62,15 @@ def register():
 def login():
     response = make_response(redirect('/'))
     username = request.form['username_login']
+    print(username)
     password = request.form["password_login"]
     result = authenticity.user_login(username, password)
     expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
     if result[0]: #user is valid 
-        user = [{"username":username}]
         response2 = make_response(redirect('/home'))
         response2.set_cookie('token', result[1], max_age=3600, httponly=True, expires=expiration)
-        json.loads(user)
+        json.dumps(username)
+        # print(json.loads(username))
         return response2
     return response
 
