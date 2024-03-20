@@ -91,6 +91,12 @@ def logout():
     # authenticity.user_logout(token)
     return response
 
+# @app.route("/chat-messages", methods=['POST', "GET"])
+# def chatserver():
+#     if request.method == "GET":
+
+
+
 
 if __name__ == '__main__':
     socket_server.run(app, host="0.0.0.0", port=8080)
