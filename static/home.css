@@ -1,0 +1,43 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+  }
+
+.blue-header {
+    background-color: lightblue;
+    color: black;
+    text-align: center;
+    justify-content: center;
+    padding: 30px;
+    flex: 2;
+  }
+
+.middle {
+    background-color: white;
+    color: black;
+    flex: 6;
+}
+
+.blue-footer {
+    background-color: lightblue;
+    color: black;
+    flex: 2;
+}
+
+.logout {
+    background-color: cornsilk;
+    color: lightblue;
+    cursor: pointer;
+    margin-left: auto;
+    border-radius: 5px;
+}
+
+.grid {
+    color: black;
+}
+
+.square {
+    color: white;
+}
