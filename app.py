@@ -57,7 +57,7 @@ def register():
 # Creates a token that expires after an hour after successful login.
 # This token will keep them logged in everytime they visit the base site,
 # until they click logout.
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=['POST', "GET"])
 def login():
     response = make_response(redirect('/'))
     print(request.form)
