@@ -65,12 +65,11 @@ def login():
     password = request.form["password_login"]
     result = authenticity.user_login(username, password)
     expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
-    if result[0]:
-        req = requests.get('localhost:8080/home')
-        user_info = req.json()
-        print(user_info)
+    if result[0]: #user is valid 
+        user = [{"username":username}]
         response2 = make_response(redirect('/home'))
         response2.set_cookie('token', result[1], max_age=3600, httponly=True, expires=expiration)
+        json.loads(user)
         return response2
     return response
 
