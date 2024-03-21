@@ -3,6 +3,8 @@ import json
 import authenticity
 import requests
 import os
+import html
+import chat
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
 
@@ -103,16 +105,20 @@ def chatserver():
     if request.method == "POST":
         payload = request.get_json()
         print(payload)
-        msg = payload['message']
-        xsrf = payload['token']
+        msg = html.escape(payload['message'])   
+        xsrf = html.escape(payload['token'])
         token = request.cookies.get('token')
         username = authenticity.findingUser(token)
         result = authenticity.xsrf_handler(username, xsrf) #return a boolean
         if result == False:
             return jsonify({"status": "f^&k you"}), 403
-        [username, msg]
+        chat.postmsg([username, msg])
+        return jsonify({"status": "success"}), 200
+    elif request.method == "GET":
+        #find the msg
+        msgBottle = chat.getmsg()
+        return jsonify(msgBottle)
 
-    return jsonify({"status": "success"}), 200
 
 if __name__ == '__main__':
     socket_server.run(app, host="0.0.0.0", port=8080)

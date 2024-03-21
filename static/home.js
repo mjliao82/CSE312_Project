@@ -98,20 +98,20 @@ function sendChat() {
     chatTextBox.focus();
 }
 
-// function updateChat() {
-//     const request = new XMLHttpRequest();
-//     request.onreadystatechange = function () {
-//         if (this.readyState === 4 && this.status === 200) {
-//             clearChat();
-//             const messages = JSON.parse(this.response);
-//             for (const message of messages) {
-//                 addMessageToChat(message);
-//             }
-//         }
-//     }
-//     request.open("GET", "/chat-messages");
-//     request.send();
-// }
+function updateChat() {
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            clearChat();
+            const messages = JSON.parse(this.response);
+            for (const message of messages) {
+                addMessageToChat(message);
+            }
+        }
+    }
+    request.open("GET", "/chat-messages");
+    request.send();
+}
 
 function welcome() {
     document.addEventListener("keypress", function (event) {
@@ -123,11 +123,11 @@ function welcome() {
 
     document.getElementById("chat-text-box").focus();
 
-    // updateChat();
+    updateChat();
 
     if (ws) {
         initWS();
     } else {
-        // setInterval(updateChat, 5000);
+        setInterval(updateChat, 5000);
     }
 }
