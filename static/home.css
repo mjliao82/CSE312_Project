@@ -1,52 +1,93 @@
-body {
+@charset "UTF-8";
+
+.body {
     margin: 0;
     padding: 0;
     display: flex;
     height: 100vh;
   }
 
-.blue-header {
-    background-color: lightblue;
-    color: black;
+
+  .html, .body, .header, .main, .footer {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Set full height for HTML and body */
+  .html, .body {
+    height: 100%;
+  }
+  
+  /* Set full height for main content */
+  .main {
+    min-height: 100vh;
+    background-color: red;
+  }
+  
+  /* Example styling for header and footer */
+  .header {
+    background-color: cornflowerblue;
     text-align: center;
-    justify-content: center;
-    padding: 30px;
-    flex: 2;
+    padding: 20px 0;
+  }
+  
+  .footer {
+    background-color: green
+    ;
+    text-align: center;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
   }
 
-.middle {
-    background-color: white;
-    color: black;
-    flex: 6;
-}
-
-.blue-footer {
-    background-color: lightblue;
-    color: black;
-    flex: 2;
-}
-
-.logout {
-    background-color: cornsilk;
-    color: lightblue;
-    cursor: pointer;
-    margin-left: auto;
-    border-radius: 5px;
-}
-
-.grid {
-    color: black;
-}
-
-.square {
-    color: white;
-}
-
-.contents {
+  .container {
+    min-height: 100vh;
     display: flex;
-    justify-content: space-around;
-    height: 78%
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #eee;
 }
+
+.button {
+    outline: none;
+    border: 4px solid green;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: none;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  button:hover {
+    cursor: pointer;
+    background: green;
+    color: white;
+  }
+
+  .grid {
+    display: grid;
+    width: 300px;
+    height: 300px;
+    grid-template-columns: auto auto auto;
+  }
+  .square {
+    display: flex;
+    width: 100px;
+    height: 100px;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    border: 3px solid black;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .block:hover {
+    cursor: pointer;
+    background: #0ff30f;
+  }
 
 .chat {
     width: 70%;
