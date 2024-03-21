@@ -7,15 +7,14 @@
     <link rel="stylesheet" href="/static/home.css" />
   </head>
   <body onload="display();welcome();">
-    <header style="background-color: cornflowerblue; justify-content: center; align-items: center;"> 
+    <div class = "header" style="background-color: cornflowerblue; justify-content: center; align-items: center;"> 
       <h1>Let's Play Tic Tac Toe!</h1>
-    </header>
-    <main class="middle">
+    </div>
+    <div class="main">
       <div class="grid">
         <div id="block1" class="square"></div>
         <div id="block2" class="square"></div>
         <div id="block3" class="square"></div>
-
         <div id="block4" class="square"></div>
         <div id="block5" class="square"></div>
         <div id="block6" class="square"></div>
@@ -23,8 +22,8 @@
         <div id="block8" class="square"></div>
         <div id="block9" class="square"></div>
       </div>
-    </main>
-    <footer class="blue-footer">
+    </div>
+    <div class="footer">
       <form
         action="/logout"
         method="post"
@@ -33,7 +32,7 @@
         <input type="submit" value="Logout" />
       </form>
       <p id="usernameHolder"></p>
-    </footer>
+    </div>
 
     <div class="contents">
       <div class="chat">
