@@ -12,10 +12,12 @@ token_collection = db["tokens"]
 xsrf_collection = db["xsrf"]
 
 
-
+def findingUser(cookie): #this function takes the auth cookie to find the accosicated username
+    user = ""
+    return user
 
 def xsrf_handler(sxrf):
-    
+
     return
 # Checks to see if the user has their token in the database
 def user_authenticated(token):
