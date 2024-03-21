@@ -12,17 +12,29 @@ token_collection = db["tokens"]
 xsrf_collection = db["xsrf"]
 
 
-def findingUser(cookie): #this function takes the auth cookie to find the accosicated username
+def findingUser(token): #this function takes the auth cookie to find the accosicated username
     user = ""
+    sha256 = hashlib.sha256()
+    sha256.update(token.encode('utf-8'))
+    token_info = token_collection.find_one({'token': sha256.hexdigest()})
+    user = str(token_info['username'])
     return user
 
-def xsrf_storage(user,xsrf): #this function adds username and xsrf to collection 
+
+def xsrf_storage(username, xsrf): #this function adds username and xsrf to collection 
+    data = {'username': username, 'xsrf': xsrf}
+    xsrf_collection.insert_one(data)
     return
 
 #input is the xsrf coming from the msg, verify it against the stored xsrf with the associated user
-def xsrf_handler(user, xsrf): #returns a boolean
-
-    return
+def xsrf_handler(username, xsrf): #returns a boolean
+    record = xsrf_collection.find_one({'xsrf': xsrf})
+    record_user = record['username']
+    if record_user == username:
+        return True
+    else:
+        return False
+    
 # Checks to see if the user has their token in the database
 def user_authenticated(token):
     sha256 = hashlib.sha256()
