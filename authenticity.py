@@ -79,7 +79,21 @@ def user_logout(token):
     sha256.update(token.encode('utf-8'))
     token_collection.delete_one({'token': sha256.hexdigest()})
     return
-    
+
+
+#returns false if the cookie is edited
+def check_authToken(user, token): 
+    sha256 = hashlib.sha256()
+    sha256.update(token.encode('utf-8'))
+    token_info = token_collection.find_one({"username":user,'token': sha256.hexdigest()})
+    if token_info:
+        return True
+    else:
+        return False
+
+
+
+
 # Helper Functions
 
 def check_password(password):

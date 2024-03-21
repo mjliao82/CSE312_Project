@@ -55,11 +55,13 @@ app.secret_key = 'your_secret_key'  # Set a secret key for sessions.
 # Creates a token that expires after an hour after successful login.
 # This token will keep them logged in everytime they visit the base site,
 # until they click logout.
+
+#global variable for username, i need to access in in def homepage():
+
 @app.route("/login", methods=['POST'])
 def login():
     response = make_response(redirect('/'))
     username = request.form['username_login']
-    print(username)
     password = request.form["password_login"]
     result = authenticity.user_login(username, password)
     expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
@@ -78,7 +80,16 @@ def login():
 @app.route('/home')
 def homepage():
     xsrf = session.get('xsrf_token', '')
-    print(xsrf)
+    print(request.cookies.get('token'))
+    token = request.cookies.get('token')
+    user = session.get('user')
+    result = authenticity.check_authToken(user, token)
+    if result == False:
+        resp = make_response(redirect("/"))
+        resp.delete_cookie('token')
+        session.clear()
+        authenticity.user_logout(token)
+        return resp
     response = make_response(render_template("home.html", xsrf_token=xsrf))
     return response
 
@@ -94,10 +105,12 @@ def get_username():
 @app.route("/logout", methods=['POST'])
 def logout():
     response = make_response(redirect('/'))
-    # token = request.get['token']
+    token = request.cookies.get('token')
     response.delete_cookie('token')
-    
-    # authenticity.user_logout(token)
+    session.clear()
+    #delete
+
+    authenticity.user_logout(token)
     return response
 
 @app.route("/chat-messages", methods=['POST', "GET"])
