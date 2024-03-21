@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="/static/home.css" />
   </head>
   <body onload="display();welcome();">
-    <div class = "header" style="background-color: cornflowerblue; justify-content: center; align-items: center;"> 
+    <div class = "header"> 
       <h1>Let's Play Tic Tac Toe!</h1>
     </div>
     <div class="main">
+      <div class="grid-holder">
       <div class="grid">
         <div id="block1" class="square"></div>
         <div id="block2" class="square"></div>
@@ -21,6 +22,24 @@
         <div id="block7" class="square"></div>
         <div id="block8" class="square"></div>
         <div id="block9" class="square"></div>
+      </div>
+      </div>
+      
+      <div class="chat-holder">
+        <div class="chat">
+          <div id="chat-messages"></div>
+          <div class="chat-form">
+            <hr />
+            <label>
+              Chat:
+              <input id="chat-text-box" type="text" />
+            </label>
+            <input id="xsrf" type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+              <button id="chat-button" onclick="sendChat()">Send</button>
+            </p>
+          </div>
+        </div>
+  
       </div>
     </div>
     <div class="footer">
@@ -35,19 +54,6 @@
     </div>
 
     <div class="contents">
-      <div class="chat">
-        <div id="chat-messages"></div>
-        <div class="chat-form">
-          <hr />
-          <label>
-            Chat:
-            <input id="chat-text-box" type="text" />
-          </label>
-          <input id="xsrf" type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
-            <button id="chat-button" onclick="sendChat()">Send</button>
-          </p>
-        </div>
-      </div>
 
     <script src="/static/home.js"></script>
   </body>

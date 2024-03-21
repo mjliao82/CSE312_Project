@@ -19,8 +19,24 @@
   
   /* Set full height for main content */
   .main {
-    min-height: 100vh;
+    min-height: 80vh;
     background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .grid-holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .chat-holder {
+    width: 10%;
+    margin-left: auto;
+    justify-content: center;
+    align-items: center;
   }
   
   /* Example styling for header and footer */
@@ -32,13 +48,13 @@
   }
   
   .footer {
-    background-color: green
-    ;
     text-align: center;
     padding: 10px 0;
     position: absolute;
     bottom: 0;
-    left: 0;
+    border-style: solid;
+    border-color: cornflowerblue;
+    display: flex;
   }
 
   .container {
@@ -103,3 +119,11 @@
     height: 90%;
     overflow: scroll;
 }
+
+#block1, #block2, #block3 {border-top: none;}
+
+#block1, #block4, #block7 {border-left: none;}
+
+#block7, #block8, #block9 {border-bottom: none;}
+
+#block3, #block6, #block9 {border-right: none;}
