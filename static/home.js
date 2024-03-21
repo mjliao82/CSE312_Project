@@ -77,7 +77,7 @@ function sendChat() {
     const chatTextBox = document.getElementById("chat-text-box");
     const message = chatTextBox.value;
     const hiddenXSRF = document.getElementById('xsrf');
-    const token = hiddenXSRF.innerText;
+    const token = hiddenXSRF.value;
     chatTextBox.value = "";
     if (ws) {
         // Using WebSockets
@@ -92,25 +92,26 @@ function sendChat() {
         }
         const messageJSON = {"message": message, "token":token};
         request.open("POST", "/chat-messages");
+        request.setRequestHeader("Content-Type", "application/json"); 
         request.send(JSON.stringify(messageJSON));
     }
     chatTextBox.focus();
 }
 
-function updateChat() {
-    const request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            clearChat();
-            const messages = JSON.parse(this.response);
-            for (const message of messages) {
-                addMessageToChat(message);
-            }
-        }
-    }
-    request.open("GET", "/chat-messages");
-    request.send();
-}
+// function updateChat() {
+//     const request = new XMLHttpRequest();
+//     request.onreadystatechange = function () {
+//         if (this.readyState === 4 && this.status === 200) {
+//             clearChat();
+//             const messages = JSON.parse(this.response);
+//             for (const message of messages) {
+//                 addMessageToChat(message);
+//             }
+//         }
+//     }
+//     request.open("GET", "/chat-messages");
+//     request.send();
+// }
 
 function welcome() {
     document.addEventListener("keypress", function (event) {
@@ -122,11 +123,11 @@ function welcome() {
 
     document.getElementById("chat-text-box").focus();
 
-    updateChat();
+    // updateChat();
 
     if (ws) {
         initWS();
     } else {
-        setInterval(updateChat, 5000);
+        // setInterval(updateChat, 5000);
     }
 }

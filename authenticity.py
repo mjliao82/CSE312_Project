@@ -9,9 +9,14 @@ mongo_client = MongoClient("mongo")
 db = mongo_client["cse312_group"]
 user_collection = db["users"]
 token_collection = db["tokens"]
+xsrf_collection = db["xsrf"]
 
 
 
+
+def xsrf_handler(sxrf):
+    
+    return
 # Checks to see if the user has their token in the database
 def user_authenticated(token):
     sha256 = hashlib.sha256()

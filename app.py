@@ -2,6 +2,7 @@ import datetime
 import json
 import authenticity
 import requests
+import os
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
 
@@ -39,12 +40,6 @@ def serve_yo():
     return response
 
 
-@app.route('/home')
-def homepage():
-    response = make_response(render_template("home.html"))
-    return response
-
-
 @app.route('/register', methods=["POST"])
 def register():
     response = make_response(redirect('/'))
@@ -70,7 +65,18 @@ def login():
         response2 = make_response(redirect('/home'))
         response2.set_cookie('token', result[1], max_age=3600, httponly=True, expires=expiration)
         session['user'] = username
+        #generating xsrf
+        xsrf_token = os.urandom(24).hex()
+        session['xsrf_token'] = xsrf_token
         return response2
+    return response
+
+
+@app.route('/home')
+def homepage():
+    xsrf = session.get('xsrf_token', '')
+    print(xsrf)
+    response = make_response(render_template("home.html", xsrf_token=xsrf))
     return response
 
 # New endpoint to display username on frontend
@@ -91,12 +97,14 @@ def logout():
     # authenticity.user_logout(token)
     return response
 
-# @app.route("/chat-messages", methods=['POST', "GET"])
-# def chatserver():
-#     if request.method == "GET":
-
-
-
+@app.route("/chat-messages", methods=['POST', "GET"])
+def chatserver():
+    if request.method == "POST":
+        payload = request.get_json()
+        print(payload)
+        msg = payload['message']
+        xsrf = payload['token']
+    return jsonify({"status": "success"}), 200
 
 if __name__ == '__main__':
     socket_server.run(app, host="0.0.0.0", port=8080)
