@@ -16,7 +16,11 @@ def findingUser(cookie): #this function takes the auth cookie to find the accosi
     user = ""
     return user
 
-def xsrf_handler(sxrf):
+def xsrf_storage(user,xsrf): #this function adds username and xsrf to collection 
+    return
+
+#input is the xsrf coming from the msg, verify it against the stored xsrf with the associated user
+def xsrf_handler(user, xsrf): #returns a boolean
 
     return
 # Checks to see if the user has their token in the database

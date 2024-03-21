@@ -67,6 +67,7 @@ def login():
         session['user'] = username
         #generating xsrf
         xsrf_token = os.urandom(24).hex()
+        authenticity.xsrf_storage(username, xsrf_token)
         session['xsrf_token'] = xsrf_token
         return response2
     return response
@@ -104,6 +105,13 @@ def chatserver():
         print(payload)
         msg = payload['message']
         xsrf = payload['token']
+        token = request.cookies.get('token')
+        username = authenticity.findingUser(token)
+        result = authenticity.xsrf_handler(username, xsrf) #return a boolean
+        if result == False:
+            return jsonify({"status": "f^&k you"}), 403
+        [username, msg]
+
     return jsonify({"status": "success"}), 200
 
 if __name__ == '__main__':
