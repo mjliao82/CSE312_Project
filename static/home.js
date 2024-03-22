@@ -47,6 +47,7 @@ function deleteMessage(messageId) {
     };
     request.open("DELETE", "/chat-messages", true); 
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    // add message_id to end
     request.send(JSON.stringify({id: messageId})); 
 }
 
