@@ -38,17 +38,18 @@ function initWS() {
     }
 }
 
+function deleteMessage(messageId) {
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            console.log(this.response); 
+        }
+    };
+    request.open("DELETE", "/chat-messages", true); 
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.send(JSON.stringify({id: messageId})); 
+}
 
-// function deleteMessage(messageId) {
-//     const request = new XMLHttpRequest();
-//     request.onreadystatechange = function () {
-//         if (this.readyState === 4 && this.status === 200) {
-//             console.log(this.response);
-//         }
-//     }
-//     request.open("DELETE", "/chat-messages/" + messageId);
-//     request.send();
-// }
 
 function chatMessageHTML(messageJSON) {
     const username = messageJSON.username;
@@ -70,7 +71,6 @@ function addMessageToChat(messageJSON) {
     chatMessages.scrollIntoView(false);
     chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }
-
 
 
 function sendChat() {
