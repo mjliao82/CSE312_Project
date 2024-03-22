@@ -27,14 +27,6 @@ def landing_page():
     response.headers["X-Content-Type-Options"] = 'nosniff'
     return response
 
-
-@app.route('/static/login.js')
-def serve_js():
-    response = make_response(send_from_directory('static', 'login.js'))
-    response.headers["X-Content-Type-Options"] = 'nosniff'
-    return response
-
-
 @app.route('/static/login.css')
 def serve_logCSS():
     response = make_response(send_from_directory('static', 'login.css'))
@@ -45,6 +37,12 @@ def serve_logCSS():
 @app.route('/static/yo.jpg')
 def serve_yo():
     response = make_response(send_from_directory('static', 'yo.jpg'))
+    response.headers["X-Content-Type-Options"] = 'nosniff'
+    return response
+
+@app.route('/static/login.js')
+def serve_js():
+    response = make_response(send_from_directory('static', 'login.js'))
     response.headers["X-Content-Type-Options"] = 'nosniff'
     return response
 
