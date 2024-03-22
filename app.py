@@ -41,6 +41,12 @@ def serve_yo():
     response.headers["X-Content-Type-Options"] = 'nosniff'
     return response
 
+@app.route('/static/login.js')
+def serve_js():
+    response = make_response(send_from_directory('static', 'login.js'))
+    response.headers["X-Content-Type-Options"] = 'nosniff'
+    return response
+
 
 @app.route('/register', methods=["POST"])
 def register():
@@ -109,11 +115,10 @@ def logout():
     response.delete_cookie('token')
     session.clear()
     #delete
-
     authenticity.user_logout(token)
     return response
 
-@app.route("/chat-messages", methods=['POST', "GET"])
+@app.route("/chat-messages", methods=['POST', "GET", "DELETE"])
 def chatserver():
     if request.method == "POST":
         payload = request.get_json()
@@ -131,7 +136,31 @@ def chatserver():
         #find the msg
         msgBottle = chat.getmsg()
         return jsonify(msgBottle)
+    elif request.method == "DELETE":
+        payload = request.get_json()
+        message_id = payload['id']
+        token = request.cookies.get('token')
+        username = authenticity.findingUser(token)
 
+        # verify user
+        auth_user = True
+        message_data = chat.chat_collection.find_one({"id": message_id})
+        if message_data and message_data['username'] == username:
+            auth_user = True
+        else:
+             auth_user = False
+
+        if auth_user == False:
+             return jsonify({"status":"fail"}), 401
+
+        #delete chat
+        result = chat.chat_collection.delete_one({"id": message_id})
+        #return appropriate response based on attempted deletion
+        if result.deleted_count > 0:
+            return jsonify({"status":"success"}), 200
+        else:
+            return jsonify({"status":"fail"}), 404
+        
 
 if __name__ == '__main__':
     socket_server.run(app, host="0.0.0.0", port=8080)
