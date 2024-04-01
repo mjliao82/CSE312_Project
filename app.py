@@ -5,11 +5,16 @@ import requests
 import os
 import html
 import chat
+import uuid
+import logging
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 socket_server = SocketIO(app)
+UPLOAD_FOLDER = 'public/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
 # Upon site entry, if the user still has their non-expired token, they will be
@@ -121,7 +126,7 @@ def chatserver():
     if request.method == "POST":
         payload = request.get_json()
         print(payload)
-        msg = html.escape(payload['message'])   
+        msg = html.escape(payload['message'])  
         xsrf = html.escape(payload['token'])
         token = request.cookies.get('token')
         username = authenticity.findingUser(token)
@@ -159,6 +164,28 @@ def chatserver():
         else:
             return jsonify({"status":"fail"}), 404
         
+@app.route("/upload-image", methods=['POST'])
+def upload_image():
+    file = request.files['chatImage']
+    if file:
+        filename = f"image{str(uuid.uuid4())}.jpg"
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
+        img_src = f"/public/uploads/{filename}"
+        message_html = f'<img src="{img_src}" alt="Uploaded image">'
+        username = session.get('user')
+        chat.chat_collection.insert_one({"message": message_html, "username": username,"id":str(uuid.uuid4())})
+
+    return redirect(url_for('homepage'))
+
+@app.route ("/public/uploads/<filename>")
+def serve_image(filename):
+    filename = os.path.basename(filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'])
+
+    return send_from_directory(file_path,filename)
+
 
 if __name__ == '__main__':
     socket_server.run(app, host="0.0.0.0", port=8080)
