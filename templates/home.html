@@ -38,7 +38,13 @@
               <button id="chat-button" onclick="sendChat()">Send</button>
             </p>
           </div>
+
         </div>
+        <form action="/upload-image" method="post" enctype="multipart/form-data">
+              <input type="file" name="chatImage" accept=".jpg">
+          </label>
+          <input type="submit" value="Upload">
+      </form>
   
       </div>
     </div>
