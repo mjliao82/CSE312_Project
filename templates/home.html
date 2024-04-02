@@ -41,8 +41,16 @@
 
         </div>
         <form action="/upload-image" method="post" enctype="multipart/form-data">
-              <input type="file" name="chatImage" accept=".jpg">
+          <input type="file" name="chatImage" accept=".jpg">
           </label>
+          <input type="submit" value="Upload">
+        </form>
+        
+        <form id="video-upload-form" action="/upload-video" method="post" enctype="multipart/form-data">
+          <label>
+              Upload Video:
+          </label>
+          <input id="video-input" type="file" name="chatVideo" accept="video/mp4">
           <input type="submit" value="Upload">
       </form>
   

@@ -14,7 +14,7 @@ app = Flask(__name__)
 socket_server = SocketIO(app)
 UPLOAD_FOLDER = 'public/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
 
 
 # Upon site entry, if the user still has their non-expired token, they will be
@@ -125,7 +125,6 @@ def logout():
 def chatserver():
     if request.method == "POST":
         payload = request.get_json()
-        print(payload)
         msg = html.escape(payload['message'])  
         xsrf = html.escape(payload['token'])
         token = request.cookies.get('token')
@@ -151,10 +150,10 @@ def chatserver():
         if message_data and message_data['username'] == username:
             auth_user = True
         else:
-             auth_user = False
+            auth_user = False
 
         if auth_user == False:
-             return jsonify({"status":"fail"}), 401
+            return jsonify({"status":"fail"}), 401
 
         #delete chat
         result = chat.chat_collection.delete_one({"id": message_id})
@@ -164,6 +163,7 @@ def chatserver():
         else:
             return jsonify({"status":"fail"}), 404
         
+# Function stores user image uploads in chat database
 @app.route("/upload-image", methods=['POST'])
 def upload_image():
     file = request.files['chatImage']
@@ -173,19 +173,35 @@ def upload_image():
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)
         img_src = f"/public/uploads/{filename}"
-        message_html = f'<img src="{img_src}" alt="Uploaded image">'
+        message_html = f'<img src="{img_src}" alt="User Image" width="300" height="400">'
         username = session.get('user')
-        chat.chat_collection.insert_one({"message": message_html, "username": username,"id":str(uuid.uuid4())})
-
+        data = [username, message_html, str(uuid.uuid4())]
+        chat.postmsg(data)
     return redirect(url_for('homepage'))
 
-@app.route ("/public/uploads/<filename>")
-def serve_image(filename):
+# Function loads user uploads from disk
+@app.route("/public/uploads/<filename>")
+def serve_uploads(filename):
     filename = os.path.basename(filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'])
+    return send_from_directory(file_path, filename)
 
-    return send_from_directory(file_path,filename)
-
+# Function stores user video uploads in chat database
+@app.route("/upload-video", methods=['POST'])
+def upload_video():
+    file = request.files['chatVideo']
+    if file:
+        filename = f"video{str(uuid.uuid4())}.mp4"
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
+        vid_src = f"/public/uploads/{filename}"
+        message_html = f'<video src="{vid_src}" alt="User Video" controls width="400" height="300">'
+        username = session.get('user')
+        data = [username, message_html, str(uuid.uuid4())]
+        chat.postmsg(data)
+    return redirect(url_for('homepage'))
+    
 
 if __name__ == '__main__':
     socket_server.run(app, host="0.0.0.0", port=8080)

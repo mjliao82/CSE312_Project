@@ -129,6 +129,6 @@ function welcome() {
     if (ws) {
         initWS();
     } else {
-        setInterval(updateChat, 5000);
+        setInterval(updateChat, 30000);
     }
 }
