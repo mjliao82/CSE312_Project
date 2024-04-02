@@ -168,9 +168,20 @@ def chatserver():
 def upload_image():
     file = request.files['chatImage']
     if file:
-        filename = f"image{str(uuid.uuid4())}.jpg"
+        file_bytes = file.read(10)
+        # .jpeg file
+        filename = f""
+        if file_bytes.startswith(b"\xff\xd8"):
+            filename = f"image{str(uuid.uuid4())}.jpeg"
+        # .gif file
+        elif file_bytes.startswith(b'\x47\x49\x46\x38\x37\x61') or file_bytes.startswith(b'\x47\x49\x46\x38\x39\x61'):
+            filename = f"image{str(uuid.uuid4())}.gif"
+        # .png file
+        elif file_bytes.startswith(b'\x89PNG'):
+            filename = f"image{str(uuid.uuid4())}.png"
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.seek(0)  # Resets file pointer to beginning of file after file.read()
         file.save(file_path)
         img_src = f"/public/uploads/{filename}"
         message_html = f'<img src="{img_src}" alt="User Image" width="300" height="400">'
