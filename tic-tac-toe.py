@@ -14,6 +14,22 @@ def start_new_game():
 # all spaces on the grid AREN'T a '0'. Will return "Win" if a matching pattern is found. If neither and the game is
 # still ongoing, will return "Continue"
 def check_winner(name, board):
+    if '0' not in board:
+         return "Tie"
+     
+    if (board[0][0] == board[1][1] == board[2][2] and board[0][0] != '0') or \
+     (board[0][2] == board[1][1] == board[2][0] and board[0][2] != '0'):
+         return "Win"
+
+    for row in board:
+        if row[0] == row[1] == row[2] and row[0] != '0':
+            return "Win"
+    
+    col = 0
+    while col < 3:
+        if board[0][col] == board[1][col] == board[2][col] and board[2][col] != '0':
+            return "Win"
+        
     return "Continue"
 
 # Include the name of the current player making a move. Will update the grid if the chosen position is available,
