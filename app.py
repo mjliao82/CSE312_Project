@@ -15,10 +15,44 @@ socket_server = SocketIO(app)
 UPLOAD_FOLDER = 'public/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
-
+socketio = SocketIO(app)
 
 # Upon site entry, if the user still has their non-expired token, they will be
 # automatically logged into the homepage, otherwise back to login.
+
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
+
+@socketio.on('send_dm')
+def handle_send_dm(data):
+    print('Received DM:', data)
+    username = data['dm']
+    message = data['message']
+    recipient = authenticity.recipeientID(username)
+    if recipient != None:
+
+        emit('dm', {'message': message}, room=recipient)
+    # Here, you would typically find the recipient's session ID and emit a message to that specific user
+    else:
+        print("could be broken in multiple ways")
+
+@socketio.on('send_chat')
+def handle_chat(message_json):
+    username = 'guest' #augthenticate the user and get the username
+    msg = html.escape(message_json['message'])
+    print(msg)
+    chat.postmsg([username, msg])
+    obj = {"username":username, 'message': msg}
+    # ...
+    # Then, broadcast the message to all connected clients
+    emit('receive_chat', obj, broadcast=True)
+
+
 @app.route("/")
 def landing_page():
     token = request.cookies.get('token')

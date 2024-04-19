@@ -1,3 +1,6 @@
+var socket = io()
+
+
 function display() {
     const request = new XMLHttpRequest();
     request.onreadystatechange = function (){
@@ -16,6 +19,16 @@ function display() {
     request.send();
 }
 
+
+socket.on('connect', function() {
+    console.log('Connected to the server');
+});
+
+socket.on('disconnect', function() {
+    console.log('Disconnected from the server');
+});
+
+
 function fetchonline() {
     fetch("/online")
         .then(response => response.json())
@@ -27,7 +40,6 @@ function fetchonline() {
                     <div>
                         ${user} 
                         <input id="chat-text-box-${index}" type="text" />
-                        <button id="chat-button-${index}" onclick="sendDM('${user}', ${index})">DM</button>
                     </div>
                 `;
                 remoteUserId = user;
@@ -37,30 +49,17 @@ function fetchonline() {
 }
 
 
-setInterval(fetchonline, 30000);
 
 
 
-
-const ws = false;
-let socket = null;
-
-function initWS() {
-    // Establish a WebSocket connection with the server
-    socket = new WebSocket('ws://' + window.location.host + '/websocket');
-
-    // Called whenever data is received from the server over the WebSocket connection
-    socket.onmessage = function (ws_message) {
-        const message = JSON.parse(ws_message.data);
-        const messageType = message.messageType
-        if(messageType === 'chatMessage'){
-            addMessageToChat(message);
-        }else{
-            // send message to WebRTC
-            processMessageAsWebRTC(message, messageType);
-        }
-    }
+function sendDM(user, index){
+    const chatTextBox = document.getElementById(`chat-text-box-${index}`);
+    const message = chatTextBox.value;
+    chatTextBox.value = "";
+    socket.emit('send_dm', {'messageType': 'DMMessage', 'message': message, 'dm': user});
 }
+
+
 
 function deleteMessage(messageId) {
     const request = new XMLHttpRequest();
@@ -97,6 +96,12 @@ function addMessageToChat(messageJSON) {
     chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }
 
+function addMessageToDM(messageJSON) {
+    const chatMessages = document.getElementById("chat-messages2");
+    chatMessages.innerHTML += chatMessageHTML(messageJSON);
+    chatMessages.scrollIntoView(false);
+    chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
+}
 
 function sendChat() {
     const chatTextBox = document.getElementById("chat-text-box");
@@ -108,15 +113,23 @@ function sendChat() {
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
-            console.log(this.response);
+            // console.log(this.response);
         }
     }
-    const messageJSON = {"message": message, "token":token};
-    request.open("POST", "/chat-messages");
-    request.setRequestHeader("Content-Type", "application/json"); 
-    request.send(JSON.stringify(messageJSON));
+    const messageJSON = {"message": message, "token": token};
+    socket.emit('send_chat', messageJSON);
+
+    // const messageJSON = {"message": message, "token":token};
+    // request.open("POST", "/chat-messages");
+    // request.setRequestHeader("Content-Type", "application/json"); 
+    // request.send(JSON.stringify(messageJSON));
     chatTextBox.focus();
 }
+
+socket.on('receive_chat', function(message) {
+    addMessageToChat(message)
+    console.log('New chat message received:', message);
+});
 
 function updateChat() {
     const request = new XMLHttpRequest();
@@ -133,6 +146,26 @@ function updateChat() {
     request.send();
 }
 
+function clearDM() {
+    const chatMessages = document.getElementById("chat-messages2");
+    chatMessages.innerHTML = "";
+}
+
+function updateDM() {
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            clearDM();
+            const messages = JSON.parse(this.response);
+            for (const message of messages) {
+                addMessageToDM(message);
+            }
+        }
+    }
+    request.open("GET", "/DM-messages");
+    request.send();
+}
+
 function welcome() {
     document.addEventListener("keypress", function (event) {
         if (event.code === "Enter") {
@@ -144,10 +177,8 @@ function welcome() {
     document.getElementById("chat-text-box").focus();
 
     updateChat();
+    // updateDM();
 
-    if (ws) {
-        initWS();
-    } else {
-        setInterval(updateChat, 30000);
-    }
+    // setInterval(updateChat, 30000);
+    setInterval(fetchonline, 30000);
 }

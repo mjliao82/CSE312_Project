@@ -45,6 +45,14 @@ def user_authenticated(token):
     else:
         return False
 
+def recipeientID(name):
+    user_document = token_collection.find_one({"username": name})
+    if user_document:
+        recipient_id = str(user_document['_id'])
+        return recipient_id
+    else:
+        return None
+
 def onlineUsers():
     user_documents = token_collection.find({})
     users = [user['username'] for user in user_documents]

@@ -119,6 +119,10 @@
     height: 90%;
     overflow: scroll;
 }
+#chat-messages2 {
+  height: 55%;
+  overflow: scroll;
+}
 
 #block1, #block2, #block3 {border-top: none;}
 
