@@ -85,6 +85,11 @@ def login():
         return response2
     return response
 
+@app.route("/online")
+def userlist():
+    result = authenticity.onlineUsers()
+    return jsonify(users=result)
+
 
 @app.route('/home')
 def homepage():

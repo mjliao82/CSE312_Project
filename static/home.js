@@ -4,8 +4,8 @@ function display() {
         if (this.readyState === 4 && this.status === 200){
             const response = JSON.parse(this.responseText);
             if (response.username) {
-                console.log("hello");
-                console.log(response.username);  // Log the username.
+                // console.log("hello");
+                // console.log(response.username);  // Log the username.
                 document.getElementById("usernameHolder").innerHTML = response.username;
             } else {
                 console.log("Error:", response.error);  // Log the error.
@@ -15,6 +15,30 @@ function display() {
     request.open("GET", "/get-username", true);
     request.send();
 }
+
+function fetchonline() {
+    fetch("/online")
+        .then(response => response.json())
+        .then(data => {
+            const onlineUserElement = document.getElementById("OnlineUsers");
+            onlineUserElement.innerHTML = '';
+            data.users.forEach((user, index) => {
+                onlineUserElement.innerHTML += `
+                    <div>
+                        ${user} 
+                        <input id="chat-text-box-${index}" type="text" />
+                        <button id="chat-button-${index}" onclick="sendDM('${user}', ${index})">DM</button>
+                    </div>
+                `;
+                remoteUserId = user;
+            });
+        })
+        .catch(error => console.error('Error fetching online users:', error));
+}
+
+
+setInterval(fetchonline, 30000);
+
 
 
 
@@ -80,22 +104,17 @@ function sendChat() {
     const hiddenXSRF = document.getElementById('xsrf');
     const token = hiddenXSRF.value;
     chatTextBox.value = "";
-    if (ws) {
-        // Using WebSockets
-        socket.send(JSON.stringify({'messageType': 'chatMessage', 'message': message, 'token':token}));
-    } else {
         // Using AJAX
-        const request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                console.log(this.response);
-            }
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            console.log(this.response);
         }
-        const messageJSON = {"message": message, "token":token};
-        request.open("POST", "/chat-messages");
-        request.setRequestHeader("Content-Type", "application/json"); 
-        request.send(JSON.stringify(messageJSON));
     }
+    const messageJSON = {"message": message, "token":token};
+    request.open("POST", "/chat-messages");
+    request.setRequestHeader("Content-Type", "application/json"); 
+    request.send(JSON.stringify(messageJSON));
     chatTextBox.focus();
 }
 
