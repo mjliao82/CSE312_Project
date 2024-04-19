@@ -45,6 +45,10 @@ def user_authenticated(token):
     else:
         return False
 
+def onlineUsers():
+    user_documents = token_collection.find({})
+    users = [user['username'] for user in user_documents]
+    return users
 
 def user_registration(username, password, confirm_password):
     valid = check_password(password)
