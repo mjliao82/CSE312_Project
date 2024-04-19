@@ -16,6 +16,21 @@ function display() {
     request.send();
 }
 
+function profPic() {
+    const payload = document.getElementById("image-upload-form");
+    const request = new XMLHttpRequest();
+    request.open("POST", "/profPic");
+    request.setRequestHeader('Content-Type', 'image/jpg')
+    request.send(payload);
+}
+
+function blockSelect(position) {
+    const request = new XMLHttpRequest();
+    request.open("POST", "/move");
+    request.setRequestHeader('Position', position);
+    console.log(request);
+    request.send();
+}
 
 
 const ws = false;

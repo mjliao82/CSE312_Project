@@ -1,6 +1,7 @@
 import datetime
 import json
 import authenticity
+from authenticity import db
 import requests
 import os
 import html
@@ -9,6 +10,7 @@ import uuid
 import logging
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
+import tictactoe
 
 app = Flask(__name__)
 socket_server = SocketIO(app)
@@ -212,6 +214,27 @@ def upload_video():
         data = [username, message_html, str(uuid.uuid4())]
         chat.postmsg(data)
     return redirect(url_for('homepage'))
+
+@app.route("/move", methods=['POST'])
+def checker():
+    cookies = request.headers["Cookie"]
+    notClean = cookies.split("game_id=")[1]
+    gameid = notClean.split(";")
+    notClean = cookies.split("token=")[1]
+    token = notClean.split(";")[0]
+    position = request.headers["Position"]
+    print("*************************")
+    print(gameid)
+    print(position)
+    print(token)
+    print("*************************")
+    #gameid, position, player token 
+    status = tictactoe.move(gameid, position, token)
+    return redirect(url_for('homepage'))
+
+# @app.route("/profPic", method=['POST'])
+# def profPic():
+#     return ""
     
 
 if __name__ == '__main__':
