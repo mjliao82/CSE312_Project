@@ -15,12 +15,11 @@ places = {"1": (0, 0), "2": (0, 1), "3": (0, 2), "4": (1, 0), "5": (1, 1), "6": 
 def start_new_game(token):
     player = findingUser(token)
     grid = [['0', '0', '0'], ['0', '0', '0'], ['0', '0', '0']]
-    waiting_game = game_queue.find_one({"status": "waiting"})
+    waiting_game = game_boards.find_one({"status": "waiting"})
 
     if waiting_game:
         players = waiting_game.get("players", []) + [player]
         game_boards.update_one({'id': waiting_game['id']}, {'$set': {'status': 'ongoing', 'players': players}})
-        game_queue.delete_one({"_id": waiting_game["_id"]})  # Remove game from queue
     else:
         id1 = uuid.uuid4()
         game_boards.insert_one({"id": id1, "board": grid, "status": "waiting", "players": [player], "current_turn": player})
@@ -66,9 +65,6 @@ def move(boardID, place, token):
     board = game_data["board"]
     name = findingUser(token)
     position = places.get(place)
-
-    if not position:
-        return "Invalid position"
 
     if board[position[0]][position[1]] != '0':
         return "Position already taken"
