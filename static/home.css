@@ -26,19 +26,52 @@
     justify-content: center;
   }
 
+  .col {
+    float: left;
+    width: 31.333333%;
+    height: auto;
+    margin: 0 1%;
+    justify-content: center;
+    align-items: center;
+  }
+
   .grid-holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .buttonDiv {
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
   .chat-holder {
-    width: 10%;
-    margin-left: auto;
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
     justify-content: center;
     align-items: center;
+    /* display: flex; */
   }
-  
+
+  .chat {
+    width: 100%;
+    background-color: #146C94;
+    padding: 20px;
+}
+
+.chat-form {
+  height: 30px;
+}
+
+#chat-messages {
+  height: 90%;
+  overflow: scroll;
+}
+
   /* Example styling for header and footer */
   .header {
     background-color: cornflowerblue;
@@ -116,21 +149,6 @@
     cursor: pointer;
     background: #0ff30f;
   }
-
-.chat {
-    width: 150%;
-    background-color: #146C94;
-    padding: 20px;
-}
-
-.chat-form {
-    height: 30px;
-}
-
-#chat-messages {
-    height: 90%;
-    overflow: scroll;
-}
 
 #block1, #block2, #block3 {border-top: none;}
 

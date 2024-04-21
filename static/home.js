@@ -24,6 +24,47 @@ function profPic() {
     request.send(payload);
 }
 
+document.getElementById('startGame').addEventListener('click', startGame)
+
+function startGame() {
+    function waitForGame() {
+        var interval = setInterval(function() {
+            fetch('/findGame')
+                .then(response => response.json())
+                .then(data => {            
+                    console.log('Received updates from server:', data);
+                    if (data == "GameStart") {
+                        clearInterval(interval);
+                        playGame();
+                    } else {
+                        console.log("Still waiting");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error polling server:', error);
+                });
+        }, 3000); 
+    }
+
+    waitForGame();
+}
+
+function playGame() {
+    var interval = setInterval(function() { 
+        fetch('/whosTurn')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Got the whos turn response: ", data)
+            if (data == "Yes") {
+                console.log("Its your turn");
+            }
+        })
+        .catch(error => {
+            console.log("error finding the turn")
+        })
+    }, 3000); 
+}
+
 function blockSelect(position) {
     const request = new XMLHttpRequest();
     request.open("POST", "/move");

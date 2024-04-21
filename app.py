@@ -230,6 +230,12 @@ def checker():
     print("*************************")
     #gameid, position, player token 
     status = tictactoe.move(gameid, position, token)
+    if status == "Win":
+        print("Win")
+    elif status == "Tie":
+        print("Tie")
+    else:
+        print("Continue")
     return redirect(url_for('homepage'))
 
 # @app.route("/profPic", method=['POST'])
