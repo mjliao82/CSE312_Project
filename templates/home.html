@@ -17,9 +17,12 @@
     </div>
       <h1>Let's Play Tic Tac Toe!</h1>
     </div>
-
+    
     <div class="main">
-        <button id="start-button" onclick="startGame()">Start Game</button>
+      <div class="col">
+
+      </div>  
+      <div class="col">
       <div class="grid-holder">
       <div class="grid">
         <div id="block1" class="square" onclick="blockSelect('1')"></div>
@@ -33,37 +36,43 @@
         <div id="block9" class="square" onclick="blockSelect('9')"></div>
       </div>
       </div>
-      
-      <div class="chat-holder">
-        <div class="chat">
-          <div id="chat-messages"></div>
-          <div class="chat-form">
-            <hr />
-            <label>
-              Chat:
-              <input id="chat-text-box" type="text" />
-            </label>
-            <input id="xsrf" type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
-              <button id="chat-button" onclick="sendChat()">Send</button>
-            </p>
-          </div>
-
-        </div>
-        <form action="/upload-image" method="post" enctype="multipart/form-data">
-          <input type="file" name="chatImage" accept=".jpg, .jpeg, .png, .gif">
-          </label>
-          <input type="submit" value="Upload">
-        </form>
-
-        <form id="video-upload-form" action="/upload-video" method="post" enctype="multipart/form-data">
-          <label>
-              Upload Video:
-          </label>
-          <input id="video-input" type="file" name="chatVideo" accept="video/mp4">
-          <input type="submit" value="Upload">
-      </form>
-  
+      <div class="buttonDiv">
+        <button id="start-button" onclick="startGame()">Start Game</button>
       </div>
+    </div>      
+      <div class="col">
+        <div class="chat-holder">
+          <div class="chat">
+            <div id="chat-messages"></div>
+            <div class="chat-form">
+              <hr />
+              <label>
+                Chat:
+                <input id="chat-text-box" type="text" />
+              </label>
+              <input id="xsrf" type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+                <button id="chat-button" onclick="sendChat()">Send</button>
+              </p>
+            </div>
+  
+          </div>
+          <form action="/upload-image" method="post" enctype="multipart/form-data">
+            <input type="file" name="chatImage" accept=".jpg, .jpeg, .png, .gif">
+            </label>
+            <input type="submit" value="Upload">
+          </form>
+  
+          <form id="video-upload-form" action="/upload-video" method="post" enctype="multipart/form-data">
+            <label>
+                Upload Video:
+            </label>
+            <input id="video-input" type="file" name="chatVideo" accept="video/mp4">
+            <input type="submit" value="Upload">
+        </form>
+        </div>
+
+      </div>
+
     </div>
     <div class="footer">
       <form class="logout"
