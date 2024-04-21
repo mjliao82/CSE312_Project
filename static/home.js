@@ -16,6 +16,12 @@ function display() {
     request.send();
 }
 
+function startGame(){
+    const request = new XMLHttpRequest();
+    request.open("POST", "/start-game")
+    request.send()
+}
+
 function profPic() {
     const payload = document.getElementById("image-upload-form");
     const request = new XMLHttpRequest();
