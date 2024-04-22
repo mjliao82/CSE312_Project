@@ -9,7 +9,8 @@ import uuid
 import logging
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
-
+from authenticity import db
+import tictactoe
 
 app = Flask(__name__)
 socket_server = SocketIO(app)
@@ -17,7 +18,7 @@ UPLOAD_FOLDER = 'public/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
 socketio = SocketIO(app)
-
+game_boards = db['game_boards']
 
 # Upon site entry, if the user still has their non-expired token, they will be
 # automatically logged into the homepage, otherwise back to login.
@@ -270,6 +271,67 @@ def upload_video():
         data = [username, message_html, str(uuid.uuid4())]
         chat.postmsg(data)
     return redirect(url_for('homepage'))
+
+# Called on a click on a tile, then checks for board status
+@app.route("/move", methods=['POST'])
+def checker():
+    cookies = request.headers["Cookie"]
+    notClean = cookies.split("game_id=")[1]
+    gameid = notClean.split(";")[0]
+    notClean = cookies.split("token=")[1]
+    token = notClean.split(";")[0]
+    position = request.headers["Position"]
+    print("*************************")
+    print(gameid)
+    print(position)
+    print(token)
+    print("*************************")
+    #gameid, position, player token
+    status = tictactoe.move(gameid, position, token)
+    response = make_response(redirect(url_for('homepage')))
+    if status == "Win":
+        response.set_cookie('game_id', '', expires=0)
+        print("Win")
+        return response
+    elif status == "Tie":
+        print("Tie")
+        response.set_cookie('game_id', '', expires=0)
+        return response
+    else:
+        print("Continue")
+    return redirect(url_for('homepage'))
+
+
+# Will match a player with another player to do a match
+@app.route("/findGame", methods=['POST'])
+def match_game():
+    token = request.cookies.get('token')
+    still_waiting = request.cookies.get('game_id')
+    if still_waiting:
+        return jsonify({"message": "WaitingForGame"}), 200
+
+    game_id = tictactoe.start_new_game(token)
+    if game_id is None:
+        return jsonify({"error": "FailedToStartGame"}), 500
+
+    expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
+    response = make_response(jsonify({"message": "GameStart"}), 200)
+    response.set_cookie('game_id', game_id, max_age=3600, httponly=True, expires=expiration)
+    return response
+
+
+@app.route("/whosTurn", methods=['GET'])
+def get_turn():
+    token = request.cookies.get('token')
+    game_id = request.cookies.get('game_id')
+    player = authenticity.findingUser(token)
+    data = game_boards.find_one({"id": game_id})
+    current_turn = data["current_turn"]
+    if current_turn == player:
+        response = make_response(jsonify({"message": "Yes"}), 200)
+    else:
+        response = make_response(jsonify({"message": "No"}), 200)
+    return response
     
 
 if __name__ == '__main__':

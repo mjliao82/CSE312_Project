@@ -166,6 +166,79 @@ function updateDM() {
     request.send();
 }
 
+function startGame(){
+    const request = new XMLHttpRequest();
+    request.open("POST", "/start-game")
+    request.send()
+}
+
+function profPic() {
+    const payload = document.getElementById("image-upload-form");
+    const request = new XMLHttpRequest();
+    request.open("POST", "/profPic");
+    request.setRequestHeader('Content-Type', 'image/jpg')
+    request.send(payload);
+}
+
+document.getElementById('startGame').addEventListener('click', startGame)
+
+function new_game() {
+    function waitForGame() {
+        var interval = setInterval(function() {
+            fetch('/findGame', {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Received updates from server:', data);
+                    if (data.message === "GameStart") {
+                        clearInterval(interval);
+                        playGame();
+                    } else {
+                        console.log("Still waiting");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error polling server:', error);
+                });
+        }, 3000);
+    }
+
+    waitForGame();
+}
+
+function playGame() {
+    let interval = setInterval(function () {
+        fetch('/whosTurn')
+            .then(response => response.json())
+            .then(data => {
+                console.log("Got the whos turn response: ", data);
+                if (data.message === "Yes") {
+                    console.log("Its your turn");
+                }
+            })
+            .catch(error => {
+                console.log("error finding the turn");
+            })
+    }, 3000);
+}
+
+function blockSelect(position) {
+    const request = new XMLHttpRequest();
+    request.open("POST", "/move");
+    request.setRequestHeader('Position', position);
+    request.onload = function() {
+        if (request.status === 200) {
+            console.log("Move successful");
+        } else {
+            console.error("Error making move:", request.statusText);
+        }
+    };
+    console.log(request);
+    request.send();
+}
+
+
 function welcome() {
     document.addEventListener("keypress", function (event) {
         if (event.code === "Enter") {
