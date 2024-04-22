@@ -80,10 +80,8 @@ function blockSelect(position) {
     request.onload = function() {
         if (request.status === 200) {
             console.log("Move successful");
-            // You can handle further actions if needed
         } else {
             console.error("Error making move:", request.statusText);
-            // Handle errors if necessary
         }
     };
     console.log(request);
