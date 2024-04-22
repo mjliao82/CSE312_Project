@@ -224,6 +224,7 @@ def upload_video():
     return redirect(url_for('homepage'))
 
 
+# Called on a click on a tile, then checks for board status
 @app.route("/move", methods=['POST'])
 def checker():
     cookies = request.headers["Cookie"]
@@ -252,6 +253,8 @@ def checker():
         print("Continue")
     return redirect(url_for('homepage'))
 
+
+# Will match a player with another player to do a match
 @app.route("/findGame", methods=['POST'])
 def match_game():
     token = request.cookies.get('token')
