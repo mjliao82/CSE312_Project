@@ -15,14 +15,16 @@ places = {"1": (0, 0), "2": (0, 1), "3": (0, 2), "4": (1, 0), "5": (1, 1), "6": 
 def start_new_game(token):
     player = findingUser(token)
     grid = [['0', '0', '0'], ['0', '0', '0'], ['0', '0', '0']]
-    waiting_game = game_boards.find_one({"status": "waiting"})
+    available_game = game_boards.find_one({"status": "waiting"})
 
-    if waiting_game:
-        players = waiting_game.get("players", []) + [player]
-        game_boards.update_one({'id': waiting_game['id']}, {'$set': {'status': 'ongoing', 'players': players}})
+    if available_game:
+        players = available_game.get("players", []) + [player]
+        game_boards.update_one({'id': available_game['id']}, {'$set': {'status': 'ongoing', 'players': players}})
+        return available_game['id']
     else:
-        id1 = uuid.uuid4()
-        game_boards.insert_one({"id": id1, "board": grid, "status": "waiting", "players": [player], "current_turn": player})
+        game_id = str(uuid.uuid4())
+        game_boards.insert_one({"id": game_id, "board": grid, "status": "waiting", "players": [player], "current_turn": player})
+        return game_id
 
 
 # Will be called by "move()" after each move the respective player makes. Will return "Draw" if no winner is found, but
@@ -31,7 +33,10 @@ def start_new_game(token):
 def check_winner(name, boardID):
     game_data = game_boards.find_one({"id": boardID})
     board = game_data["board"]
-    if '0' not in board:
+    print("----------------------")
+    print(board)
+    print("----------------------")
+    if "0" not in board[0] and "0" not in board[1] and '0' not in board[2]:
         game_boards.delete_one({"id": boardID})
         return "Tie"
 

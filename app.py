@@ -17,6 +17,7 @@ socket_server = SocketIO(app)
 UPLOAD_FOLDER = 'public/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
+game_boards = db['game_boards']
 
 
 # Upon site entry, if the user still has their non-expired token, they will be
@@ -67,7 +68,8 @@ app.secret_key = 'your_secret_key'  # Set a secret key for sessions.
 # This token will keep them logged in everytime they visit the base site,
 # until they click logout.
 
-#global variable for username, i need to access in in def homepage():
+# global variable for username, i need to access in in def homepage():
+
 
 @app.route("/login", methods=['POST'])
 def login():
@@ -104,6 +106,7 @@ def homepage():
     response = make_response(render_template("home.html", xsrf_token=xsrf))
     return response
 
+
 # New endpoint to display username on frontend
 @app.route("/get-username")
 def get_username():
@@ -112,6 +115,7 @@ def get_username():
         return jsonify(username=user)  # Return the username as a JSON object.
     else:
         return jsonify(error='User not logged in'), 401
+
 
 @app.route("/logout", methods=['POST'])
 def logout():
@@ -122,6 +126,7 @@ def logout():
     #delete
     authenticity.user_logout(token)
     return response
+
 
 @app.route("/chat-messages", methods=['POST', "GET", "DELETE"])
 def chatserver():
@@ -164,7 +169,8 @@ def chatserver():
             return jsonify({"status":"success"}), 200
         else:
             return jsonify({"status":"fail"}), 404
-        
+
+
 # Function stores user image uploads in chat database
 @app.route("/upload-image", methods=['POST'])
 def upload_image():
@@ -192,12 +198,14 @@ def upload_image():
         chat.postmsg(data)
     return redirect(url_for('homepage'))
 
+
 # Function loads user uploads from disk
 @app.route("/public/uploads/<filename>")
 def serve_uploads(filename):
     filename = os.path.basename(filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'])
     return send_from_directory(file_path, filename)
+
 
 # Function stores user video uploads in chat database
 @app.route("/upload-video", methods=['POST'])
@@ -215,11 +223,12 @@ def upload_video():
         chat.postmsg(data)
     return redirect(url_for('homepage'))
 
+
 @app.route("/move", methods=['POST'])
 def checker():
     cookies = request.headers["Cookie"]
     notClean = cookies.split("game_id=")[1]
-    gameid = notClean.split(";")
+    gameid = notClean.split(";")[0]
     notClean = cookies.split("token=")[1]
     token = notClean.split(";")[0]
     position = request.headers["Position"]
@@ -230,13 +239,48 @@ def checker():
     print("*************************")
     #gameid, position, player token 
     status = tictactoe.move(gameid, position, token)
+    response = make_response(redirect(url_for('homepage')))
     if status == "Win":
+        response.set_cookie('game_id', '', expires=0)
         print("Win")
+        return response
     elif status == "Tie":
         print("Tie")
+        response.set_cookie('game_id', '', expires=0)
+        return response
     else:
         print("Continue")
     return redirect(url_for('homepage'))
+
+@app.route("/findGame", methods=['POST'])
+def match_game():
+    token = request.cookies.get('token')
+    still_waiting = request.cookies.get('game_id')
+    if still_waiting:
+        return jsonify({"message": "WaitingForGame"}), 200
+
+    game_id = tictactoe.start_new_game(token)
+    if game_id is None:
+        return jsonify({"error": "FailedToStartGame"}), 500
+
+    expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
+    response = make_response(jsonify({"message": "GameStart"}), 200)
+    response.set_cookie('game_id', game_id, max_age=3600, httponly=True, expires=expiration)
+    return response
+
+
+@app.route("/whosTurn", methods=['GET'])
+def get_turn():
+    token = request.cookies.get('token')
+    game_id = request.cookies.get('game_id')
+    player = authenticity.findingUser(token)
+    data = game_boards.find_one({"id": game_id})
+    current_turn = data["current_turn"]
+    if current_turn == player:
+        response = make_response(jsonify({"message": "Yes"}), 200)
+    else:
+        response = make_response(jsonify({"message": "No"}), 200)
+    return response
 
 # @app.route("/profPic", method=['POST'])
 # def profPic():

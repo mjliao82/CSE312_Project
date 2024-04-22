@@ -35,11 +35,13 @@ document.getElementById('startGame').addEventListener('click', startGame)
 function startGame() {
     function waitForGame() {
         var interval = setInterval(function() {
-            fetch('/findGame')
+            fetch('/findGame', {
+                method: 'POST'
+            })
                 .then(response => response.json())
                 .then(data => {            
                     console.log('Received updates from server:', data);
-                    if (data == "GameStart") {
+                    if (data.message === "GameStart") {
                         clearInterval(interval);
                         playGame();
                     } else {
@@ -56,25 +58,34 @@ function startGame() {
 }
 
 function playGame() {
-    var interval = setInterval(function() { 
+    var interval = setInterval(function () {
         fetch('/whosTurn')
-        .then(response => response.json())
-        .then(data => {
-            console.log("Got the whos turn response: ", data)
-            if (data == "Yes") {
-                console.log("Its your turn");
-            }
-        })
-        .catch(error => {
-            console.log("error finding the turn")
-        })
-    }, 3000); 
+            .then(response => response.json())
+            .then(data => {
+                console.log("Got the whos turn response: ", data);
+                if (data.message === "Yes") {
+                    console.log("Its your turn");
+                }
+            })
+            .catch(error => {
+                console.log("error finding the turn");
+            })
+    }, 3000);
 }
 
 function blockSelect(position) {
     const request = new XMLHttpRequest();
     request.open("POST", "/move");
     request.setRequestHeader('Position', position);
+    request.onload = function() {
+        if (request.status === 200) {
+            console.log("Move successful");
+            // You can handle further actions if needed
+        } else {
+            console.error("Error making move:", request.statusText);
+            // Handle errors if necessary
+        }
+    };
     console.log(request);
     request.send();
 }
