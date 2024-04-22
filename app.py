@@ -10,6 +10,7 @@ import logging
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
 
+
 app = Flask(__name__)
 socket_server = SocketIO(app)
 UPLOAD_FOLDER = 'public/uploads'
@@ -17,11 +18,24 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4'}
 socketio = SocketIO(app)
 
+
 # Upon site entry, if the user still has their non-expired token, they will be
 # automatically logged into the homepage, otherwise back to login.
 
 @socketio.on('connect')
 def handle_connect():
+    token = request.cookies.get('token')
+    if token and authenticity.user_authenticated(token):
+        username = authenticity.findingUser(token)
+        if username:
+            session['username'] = username  # Store username in user's session
+            print(f"User {username} connected")
+        else:
+            emit('error', {'msg': 'Invalid token'})
+            return False  # Reject the connection
+    else:
+        emit('error', {'msg': 'Authentication required'})
+        return False  # Reject the connection
     print('Client connected')
 
 @socketio.on('disconnect')
@@ -43,14 +57,19 @@ def handle_send_dm(data):
 
 @socketio.on('send_chat')
 def handle_chat(message_json):
-    username = 'guest' #augthenticate the user and get the username
-    msg = html.escape(message_json['message'])
-    print(msg)
-    chat.postmsg([username, msg])
-    obj = {"username":username, 'message': msg}
-    # ...
-    # Then, broadcast the message to all connected clients
-    emit('receive_chat', obj, broadcast=True)
+    username = session.get('username')
+    print(username)
+    #username = 'guest' #augthenticate the user and get the username
+    if username:
+        msg = html.escape(message_json['message'])
+        print(msg)
+        chat.postmsg([username, msg])
+        obj = {"username":username, 'message': msg}
+        # ...
+        # Then, broadcast the message to all connected clients
+        emit('receive_chat', obj, broadcast=True)
+    else:
+        emit('error', {'msg': 'User not authenticated'})
 
 
 @app.route("/")
