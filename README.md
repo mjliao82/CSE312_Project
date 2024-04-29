@@ -1,6 +1,7 @@
 Link to app: tic-tac-toe.us 
 
 Dark Mode Feature !
+
 To test feature:
 1. Register an account and login
 2. Once redirected to mainpage locate "Toggle Dark Mode" button
