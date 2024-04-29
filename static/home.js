@@ -238,6 +238,12 @@ function blockSelect(position) {
     request.send();
 }
 
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    const newTheme = currentTheme === "dark" ? "" : "dark";  // Toggle theme
+    document.documentElement.setAttribute("data-theme", newTheme);
+}
+
 
 function welcome() {
     document.addEventListener("keypress", function (event) {
@@ -246,6 +252,7 @@ function welcome() {
         }
     });
 
+    document.getElementById("theme-toggle").addEventListener('click', toggleTheme);
 
     document.getElementById("chat-text-box").focus();
 
