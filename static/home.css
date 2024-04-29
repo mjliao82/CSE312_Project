@@ -1,4 +1,66 @@
 @charset "UTF-8";
+
+
+:root {
+  /* Light mode colors */
+  --background-color: #eee; 
+  --text-color: black;
+  --header-bg-color: cornflowerblue;
+  --footer-bg-color: cornflowerblue;
+  --footer-border-color: cornflowerblue;
+  --button-border-color: green;
+  --chat-bg-color: #146C94;
+  --block-hover-bg-color: #0ff30f;
+}
+
+[data-theme="dark"] {
+  /* Dark mode colors */
+  --background-color: #333;
+  --text-color: #ccc;
+  --header-bg-color: #222;
+  --footer-bg-color: #222;
+  --footer-border-color: #444;
+  --button-border-color: darkgreen;
+  --chat-bg-color: #0a4a6f;
+  --block-hover-bg-color: darkgreen;
+}
+
+.main {
+  background: var(--background-color);
+}
+
+.body, .container {
+  background: var(--background-color);
+}
+
+.html, .body, .header, .main, .footer, .button, .square, .chat {
+  color: var(--text-color);
+}
+
+.header, .footer {
+  background-color: var(--header-bg-color);
+}
+
+.footer {
+  border-color: var(--footer-border-color);
+}
+
+.button {
+  border-color: var(--button-border-color);
+}
+
+.button:hover {
+  background: var(--button-border-color);
+}
+
+.chat {
+  background-color: var(--chat-bg-color);
+}
+
+.block:hover {
+  background: var(--block-hover-bg-color);
+}
+
 .body {
     margin: 0;
     padding: 0;
@@ -20,7 +82,7 @@
   /* Set full height for main content */
   .main {
     min-height: 80vh;
-    background-color: white;
+    /*background-color: white;*/
     display: flex;
     align-items: center;
     justify-content: center;
@@ -38,10 +100,9 @@
     justify-content: center;
     align-items: center;
   }
-  
-  /* Example styling for header and footer */
+ 
   .header {
-    background-color: cornflowerblue;
+    /*background-color: cornflowerblue;*/
     text-align: center;
     padding: 20px 0;
     align-items: center;
@@ -53,7 +114,7 @@
     position: absolute;
     bottom: 0;
     border-style: solid;
-    border-color: cornflowerblue;
+    /*border-color: cornflowerblue;*/
     display: flex;
   }
 
@@ -63,12 +124,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #eee;
+    /*background: #eee;*/
 }
 
 .button {
     outline: none;
-    border: 4px solid green;
+    /*border: 4px solid green;*/
     padding: 10px 20px;
     font-size: 1rem;
     font-weight: bold;
@@ -78,8 +139,8 @@
   
   button:hover {
     cursor: pointer;
-    background: green;
-    color: white;
+    /*background: green;*/
+    /*color: white;*/
   }
 
   .grid {
@@ -102,12 +163,12 @@
   
   .block:hover {
     cursor: pointer;
-    background: #0ff30f;
+    /*background: #0ff30f;*/
   }
 
 .chat {
     width: 150%;
-    background-color: #146C94;
+    /*background-color: #146C94;*/
     padding: 20px;
 }
 
