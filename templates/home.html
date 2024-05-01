@@ -13,51 +13,61 @@
 
     </div>
     <div class="main">
-      <div class="grid-holder">
-      <div class="grid">
-        <div id="block1" class="square"></div>
-        <div id="block2" class="square"></div>
-        <div id="block3" class="square"></div>
-        <div id="block4" class="square"></div>
-        <div id="block5" class="square"></div>
-        <div id="block6" class="square"></div>
-        <div id="block7" class="square"></div>
-        <div id="block8" class="square"></div>
-        <div id="block9" class="square"></div>
-      </div>
-      </div>
-      
-      <div class="chat-holder">
-        <div class="chat">
-          <div id="chat-messages"></div>
-          <div class="chat-form">
-            <hr />
-            <label>
-              Chat:
-              <input id="chat-text-box" type="text" />
-            </label>
-            <input id="xsrf" type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
-              <button id="chat-button" onclick="sendChat()">Send</button>
-            </p>
+      <div class="col"></div>
+
+      <div class="col">
+        <div class="grid-holder">
+          <div class="grid">
+            <div id="block1" class="square" onClick="blockSelect(1)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block2" class="square" onclick="blockSelect(2)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block3" class="square" onclick="blockSelect(3)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block4" class="square" onclick="blockSelect(4)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block5" class="square" onclick="blockSelect(5)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block6" class="square" onclick="blockSelect(6)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block7" class="square" onclick="blockSelect(7)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block8" class="square" onclick="blockSelect(8)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
+            <div id="block9" class="square" onclick="blockSelect(9)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
           </div>
-
-        </div>
-        <form action="/upload-image" method="post" enctype="multipart/form-data">
-          <input type="file" name="chatImage" accept=".jpg, .jpeg, .png, .gif">
-          </label>
-          <input type="submit" value="Upload">
-        </form>
-
-        <form id="video-upload-form" action="/upload-video" method="post" enctype="multipart/form-data">
-          <label>
-              Upload Video:
-          </label>
-          <input id="video-input" type="file" name="chatVideo" accept="video/mp4">
-          <input type="submit" value="Upload">
-      </form>
-      <div class="chat">
-        <div id="chat-messages2"></div>
+          </div>
+            <button onclick="new_game()">Start Game</button>  
       </div>
+
+      <div class="col">
+        <div class="chat-holder">
+          <div class="chat">
+            <div id="chat-messages"></div>
+            <div class="chat-form">
+              <hr />
+              <label>
+                Chat:
+                <input id="chat-text-box" type="text" />
+              </label>
+              <input id="xsrf" type="hidden" name="xsrf_token" value="{{ xsrf_token }}" />
+                <button id="chat-button" onclick="sendChat()">Send</button>
+              </p>
+            </div>
+  
+          </div>
+          <form action="/upload-image" method="post" enctype="multipart/form-data">
+            <input type="file" name="chatImage" accept=".jpg, .jpeg, .png, .gif">
+            </label>
+            <input type="submit" value="Upload">
+          </form>
+  
+          <form id="video-upload-form" action="/upload-video" method="post" enctype="multipart/form-data">
+            <label>
+                Upload Video:
+            </label>
+            <input id="video-input" type="file" name="chatVideo" accept="video/mp4">
+            <input type="submit" value="Upload">
+        </form>
+        <div class="chat">
+          <div id="chat-messages2"></div>
+        </div>
+
+      </div>
+      </div>
+
       <!-- <div>
         <p id="OnlineUsers"></p>
       </div>

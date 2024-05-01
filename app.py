@@ -9,7 +9,7 @@ import uuid
 import logging
 from flask import Flask, send_from_directory, render_template, request, make_response, redirect, url_for, jsonify, session
 from flask_socketio import SocketIO, emit
-from authenticity import db
+from authenticity import db, findingUser
 import tictactoe
 
 app = Flask(__name__)
@@ -281,25 +281,22 @@ def checker():
     notClean = cookies.split("token=")[1]
     token = notClean.split(";")[0]
     position = request.headers["Position"]
-    print("*************************")
-    print(gameid)
-    print(position)
-    print(token)
-    print("*************************")
-    #gameid, position, player token
+
+    #add the move to the grid and check for winners
     status = tictactoe.move(gameid, position, token)
-    response = make_response(redirect(url_for('homepage')))
+    #response = make_response(redirect(url_for('homepage')))
+    username = findingUser(token)
+    game_data = game_boards.find_one({"id": gameid})
     if status == "Win":
-        response.set_cookie('game_id', '', expires=0)
-        print("Win")
-        return response
+        #Change the board in the database to a status of win and show the winner of the game
+        game_boards.update_one({'id': gameid}, {'$set': {'status': 'Win', 'players':{username:"Winner"}}})
+        return jsonify({'status': 'Win', 'message': 'Move played successfully', 'board':game_data["board"]})
     elif status == "Tie":
-        print("Tie")
-        response.set_cookie('game_id', '', expires=0)
-        return response
+        #Change game status to a tie
+        return jsonify({'status': 'Tie', 'message': 'Move played successfully', 'board':game_data["board"]})
     else:
-        print("Continue")
-    return redirect(url_for('homepage'))
+        #Keep status as continue
+        return jsonify({'status': 'Continue', 'message': 'Move played successfully', 'board':game_data["board"]})
 
 
 # Will match a player with another player to do a match
@@ -319,16 +316,24 @@ def match_game():
     response.set_cookie('game_id', game_id, max_age=3600, httponly=True, expires=expiration)
     return response
 
-
+#polling is used to let the player know when it is their turn. When they send a poll request they also check if they have lost or tied
 @app.route("/whosTurn", methods=['GET'])
 def get_turn():
     token = request.cookies.get('token')
     game_id = request.cookies.get('game_id')
     player = authenticity.findingUser(token)
     data = game_boards.find_one({"id": game_id})
+    #check if anyone has won
+    if data['status'] == 'Win':
+        #if they are no longer in the database they lost
+        if player not in data['players']:
+            return make_response(jsonify({"message":"Lose", "board":data['board']}))
+    elif data['status'] == 'Tie':
+        return make_response(jsonify({"message":"Tie", "board":data[board]}))
     current_turn = data["current_turn"]
+    board = data["board"]
     if current_turn == player:
-        response = make_response(jsonify({"message": "Yes"}), 200)
+        response = make_response(jsonify({"message": "Yes", "board":board}), 200)
     else:
         response = make_response(jsonify({"message": "No"}), 200)
     return response

@@ -180,7 +180,6 @@ function profPic() {
     request.send(payload);
 }
 
-document.getElementById('startGame').addEventListener('click', startGame)
 
 function new_game() {
     function waitForGame() {
@@ -214,28 +213,84 @@ function playGame() {
             .then(data => {
                 console.log("Got the whos turn response: ", data);
                 if (data.message === "Yes") {
+                    updateBoard(data.board)
                     console.log("Its your turn");
+                } else if (data.message == "Lose"){
+                    updateBoard(data.board)
+                     console.log("You Lost")
+                     clearInterval(interval)
+                } else if (data.message == "Tie") {
+                    updateBoard(data.board)
+                    console.log("There was a tie")
+                    clearInterval(interval)
+                } else if (data.message == "Win") {
+                    clearInterval(interval)
                 }
             })
             .catch(error => {
                 console.log("error finding the turn");
             })
     }, 3000);
+    console.log("Outside the interval")
 }
 
 function blockSelect(position) {
-    const request = new XMLHttpRequest();
-    request.open("POST", "/move");
-    request.setRequestHeader('Position', position);
-    request.onload = function() {
-        if (request.status === 200) {
-            console.log("Move successful");
+    fetch('/move', {
+        method: 'POST',
+        headers: {
+            'Position': position
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // updateBoard(data.board)
+        console.log(data);
+        console.log(data.status)
+        if (data.status === 'Continue') {
+            console.log('Game continues');
+            updateBoard(data.board);
+            // pos = data.Position
+            // console.log(pos)
+            // team = data.Team
+            // console.log(team)
+            // block = document.getElementById("block" + pos)
+            // xelem = block.querySelector(".x");
+            // oelem = block.querySelector(".o");
+            // if (team == "X") {
+            //     xelem.style.display = "block";
+            // } else {
+            //     oelem.style.display = "block";
+            // }
+        } else if (data.status == "Win") {
+            updateBoard(data.board)
+            console.log('You won');
+        } else if (data.status == "Tie") {
+            updateBoard(data.board)
+            console.log("Tie")
         } else {
-            console.error("Error making move:", request.statusText);
+            console.log("Unintended Response")
         }
-    };
-    console.log(request);
-    request.send();
+    })
+    .catch(error => {
+        console.error('Error playing move:', error);
+    });
+}
+
+function updateBoard(board) {
+    for (let row = 0; row < 3; row++) {
+        for (let col = 1; col <=3; col++) {
+            let pos = (row*3) + col;
+            let team = board[row][col-1];
+            let block = document.getElementById("block" + String(pos));
+            if (team == 'X') {
+                elem = block.querySelector('.x');
+                elem.style.display = 'block';
+            } else if (team == 'O') {
+                elem = block.querySelector('.o');
+                elem.style.display = 'block';
+            }
+        }
+    }
 }
 
 function toggleTheme() {

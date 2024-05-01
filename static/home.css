@@ -66,65 +66,89 @@
     padding: 0;
     display: flex;
     height: 100vh;
-  }
+}
 
 
-  .html, .body, .header, .main, .footer {
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Set full height for HTML and body */
-  .html, .body {
-    height: 100%;
-  }
-  
-  /* Set full height for main content */
-  .main {
-    min-height: 80vh;
-    /*background-color: white;*/
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.html, .body, .header, .main, .footer {
+  margin: 0;
+  padding: 0;
+}
 
-  .grid-holder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+/* Set full height for HTML and body */
+.html, .body {
+  height: 100%;
+}
 
-  .chat-holder {
-    width: 10%;
-    margin-left: auto;
-    justify-content: center;
-    align-items: center;
-  }
- 
-  .header {
-    /*background-color: cornflowerblue;*/
-    text-align: center;
-    padding: 20px 0;
-    align-items: center;
-  }
-  
-  .footer {
-    text-align: center;
-    padding: 10px 0;
-    position: absolute;
-    bottom: 0;
-    border-style: solid;
-    /*border-color: cornflowerblue;*/
-    display: flex;
-  }
+/* Set full height for main content */
+.main {
+  min-height: 80vh;
+  /*background-color: white;*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    /*background: #eee;*/
+.col {
+  width: 31.3%;
+  height: auto;
+  justify-content: center;
+  /* align-items: stretch; */
+  display: flex;
+  flex-direction: column;
+}
+
+.col button {
+  width: 20%;
+  margin: 0 auto;
+}
+
+.grid-holder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-holder {
+  width: 10%;
+  margin-left: auto;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10%;
+}
+
+.square .x, .square .o {
+  display: none;
+}
+
+.header {
+  /*background-color: cornflowerblue;*/
+  text-align: center;
+  padding: 20px 0;
+  align-items: center;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  position: absolute;
+  bottom: 0;
+  border-style: solid;
+  /*border-color: cornflowerblue;*/
+  display: flex;
+  width: 100%;
+
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /*background: #eee;*/
 }
 
 .button {
@@ -170,6 +194,8 @@
     width: 150%;
     /*background-color: #146C94;*/
     padding: 20px;
+    flex:1;
+    overflow: auto;
 }
 
 .chat-form {
