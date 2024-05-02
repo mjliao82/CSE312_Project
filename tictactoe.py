@@ -74,40 +74,44 @@ def move(boardID, place, token):
     if not game_data:
         return "Game not found"
 
-    board = game_data["board"]
-    name = findingUser(token)
-    position = places.get(place)
+    if game_data['status'] == 'ongoing' or game_data['status'] == 'Continue':
 
-    if board[position[0]][position[1]] != '0':
-        return "Position already taken"
+        board = game_data["board"]
+        name = findingUser(token)
+        position = places.get(place)
 
-    if name != game_data["current_turn"]:
-        return "It's not your turn"
+        if board[position[0]][position[1]] != '0':
+            return "Position already taken"
 
-    team = game_data['players'][name]
-    board[position[0]][position[1]] = team
-    next_player = ""
+        if name != game_data["current_turn"]:
+            return "It's not your turn"
 
-    #next_player_index = (game_data["players"].keys().index(name) + 1) % len(game_data["players"])
-    for name in game_data["players"]:
-        print("Name: ", name)
-        if game_data["current_turn"] != name:
-            next_player += name
-            print("The next player is ", next_player)
+        team = game_data['players'][name]
+        board[position[0]][position[1]] = team
+        next_player = ""
 
-    #next_player = game_data["players"][next_player_index]
+        #next_player_index = (game_data["players"].keys().index(name) + 1) % len(game_data["players"])
+        for name in game_data["players"]:
+            print("Name: ", name)
+            if game_data["current_turn"] != name:
+                next_player += name
+                print("The next player is ", next_player)
 
-    game_boards.update_one({'id': boardID}, {'$set': {'board': board, "current_turn": next_player}})
-    print("Board Updated")
-    result = check_winner(name, boardID)
-    print("Found Result")
-    if result == "Tie":
-        print("Tie")
-        return "Tie"
-    elif result == "Win":
-        print("Win")
-        return "Win"
+        #next_player = game_data["players"][next_player_index]
+
+        game_boards.update_one({'id': boardID}, {'$set': {'board': board, "current_turn": next_player}})
+        print("Board Updated")
+        result = check_winner(name, boardID)
+        print("Found Result")
+        if result == "Tie":
+            print("Tie")
+            return "Tie"
+        elif result == "Win":
+            print("Win")
+            return "Win"
+        else:
+            print("Continue")
+            return "Continue"
     else:
-        print("Continue")
-        return "Continue"
+        return ""
 

@@ -216,7 +216,6 @@ function playGame() {
                 console.log("Got the whos turn response: ", data);
                 if (data.message === "Yes") {
                     updateBoard(data.board)
-                    console.log("Its your turn");
                 } else if (data.message == "Lose"){
                     updateBoard(data.board)
                      console.log("You Lost")
@@ -227,6 +226,8 @@ function playGame() {
                     clearInterval(interval)
                 } else if (data.message == "Win") {
                     clearInterval(interval)
+                } else {
+                    console.log("It's not your turn, or a game isn't found yet")
                 }
             })
             .catch(error => {
@@ -270,7 +271,7 @@ function blockSelect(position) {
             updateBoard(data.board)
             console.log("Tie")
         } else {
-            console.log("Unintended Response")
+            console.log("Game is not ongoing or continuing")
         }
     })
     .catch(error => {

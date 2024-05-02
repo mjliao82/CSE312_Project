@@ -287,16 +287,19 @@ def checker():
     #response = make_response(redirect(url_for('homepage')))
     username = findingUser(token)
     game_data = game_boards.find_one({"id": gameid})
-    if status == "Win":
-        #Change the board in the database to a status of win and show the winner of the game
-        game_boards.update_one({'id': gameid}, {'$set': {'status': 'Win', 'players':{username:"Winner"}}})
-        return jsonify({'status': 'Win', 'message': 'Move played successfully', 'board':game_data["board"]})
-    elif status == "Tie":
-        #Change game status to a tie
-        return jsonify({'status': 'Tie', 'message': 'Move played successfully', 'board':game_data["board"]})
+    if status:
+        if status == "Win":
+            #Change the board in the database to a status of win and show the winner of the game
+            game_boards.update_one({'id': gameid}, {'$set': {'status': 'Win', 'players':{username:"Winner"}}})
+            return jsonify({'status': 'Win', 'message': 'Move played successfully', 'board':game_data["board"]})
+        elif status == "Tie":
+            #Change game status to a tie
+            return jsonify({'status': 'Tie', 'message': 'Move played successfully', 'board':game_data["board"]})
+        else:
+            #Keep status as continue
+            return jsonify({'status': 'Continue', 'message': 'Move played successfully', 'board':game_data["board"]})
     else:
-        #Keep status as continue
-        return jsonify({'status': 'Continue', 'message': 'Move played successfully', 'board':game_data["board"]})
+        return jsonify({'status': 'InvalidMove', 'message': 'Attempting to move forbidden'})
 
 
 # Will match a player with another player to do a match
@@ -337,10 +340,10 @@ def get_turn():
         if player not in data['players']:
             return make_response(jsonify({"message":"Lose", "board":data['board']}))
     elif data['status'] == 'Tie':
-        return make_response(jsonify({"message":"Tie", "board":data[board]}))
+        return make_response(jsonify({"message":"Tie", "board":data['board']}))
     current_turn = data["current_turn"]
     board = data["board"]
-    if current_turn == player:
+    if current_turn == player and (data['status'] == 'ongoing' or data['status'] == 'Continue'):
         response = make_response(jsonify({"message": "Yes", "board":board}), 200)
     else:
         response = make_response(jsonify({"message": "No"}), 200)
