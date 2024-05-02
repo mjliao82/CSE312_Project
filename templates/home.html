@@ -49,8 +49,10 @@
   
           </div>
           <form action="/upload-image" method="post" enctype="multipart/form-data">
+          </label>
+                Upload Photo:
+          </label> 
             <input type="file" name="chatImage" accept=".jpg, .jpeg, .png, .gif">
-            </label>
             <input type="submit" value="Upload">
           </form>
   
@@ -69,10 +71,13 @@
       </div>
 
       <div>
+        <p> Online Users: </p>
         <p id="OnlineUsers"></p>
       </div>
       </div>
     </div>
+
+
     <div class="footer">
       <form
         action="/logout"

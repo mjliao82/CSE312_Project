@@ -39,7 +39,6 @@ function fetchonline() {
                 onlineUserElement.innerHTML += `
                     <div>
                         ${user} 
-                        <input id="chat-text-box-${index}" type="text" />
                     </div>
                 `;
                 remoteUserId = user;
