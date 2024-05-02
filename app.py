@@ -310,28 +310,40 @@ def match_game():
     token = request.cookies.get('token')
     still_waiting = request.cookies.get('game_id')
     if still_waiting:
-        if clock > 3:
-            package = jsonify({"message":"no_opponent"}), 200
+        game_data = game_boards.find_one({'id': still_waiting})
+        if game_data['status'] == 'ongoing':
+            response = make_response(jsonify({"message": "GameStart"}), 200)
+            return response
+        elif clock > 3:
+            package = make_response(jsonify({"message": "no_opponent"}), 200)
+            game_boards.delete_one({'id': still_waiting})
+            package.set_cookie('game_id', '', max_age=0, httponly=True, expires=datetime.datetime.now())
+            clock = 1
         else:
             package = jsonify({"message": "WaitingForGame", "timer": str(clock)}), 200
-        clock += 1
+            clock += 1
         return package
 
     game_id = tictactoe.start_new_game(token)
     if game_id is None:
         return jsonify({"error": "FailedToStartGame"}), 500
-
+    game_data = game_boards.find_one({'id': game_id})
+    if game_data['status'] == 'ongoing':
+        response = make_response(jsonify({"message": "GameStart"}), 200)
+        clock = 1
+    elif game_data['status'] == 'waiting':
+        if clock > 3:
+            response = make_response(jsonify({'message': 'no_opponent'}), 200)
+            return response
+        response = make_response(jsonify({'message': 'waiting'}), 200)
+        clock += 1
     expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
-    response = make_response(jsonify({"message": "GameStart"}), 200)
-    clock = 1
     response.set_cookie('game_id', game_id, max_age=3600, httponly=True, expires=expiration)
     return response
 
 #polling is used to let the player know when it is their turn. When they send a poll request they also check if they have lost or tied
-clock = 1
 @app.route("/whosTurn", methods=['GET'])
 def get_turn():
-    global clock
     token = request.cookies.get('token')
     game_id = request.cookies.get('game_id')
     player = authenticity.findingUser(token)
@@ -347,14 +359,10 @@ def get_turn():
     board = data["board"]
     if current_turn == player and (data['status'] == 'ongoing' or data['status'] == 'Continue'):
         response = make_response(jsonify({"message": "Yes", "board": board}), 200)
-        clock = 1
+        return response
     else:
-        if clock > 3:
-            response = make_response(jsonify({"message": "no_opponent"}), 200)
-        else:
-            response = make_response(jsonify({"message": "No"}), 200)
-            clock += 1
-    return response
+        response = make_response(jsonify({'message': 'InvalidMove'}), 200)
+        return response
     
 
 if __name__ == '__main__':
