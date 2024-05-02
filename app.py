@@ -300,12 +300,19 @@ def checker():
 
 
 # Will match a player with another player to do a match
+clock = 1
 @app.route("/findGame", methods=['POST'])
 def match_game():
+    global clock
     token = request.cookies.get('token')
     still_waiting = request.cookies.get('game_id')
     if still_waiting:
-        return jsonify({"message": "WaitingForGame"}), 200
+        if clock > 3:
+            package = jsonify({"message":"no_opponent"}), 200
+        else:
+            package = jsonify({"message": "WaitingForGame", "timer": str(clock)}), 200
+        clock += 1
+        return package
 
     game_id = tictactoe.start_new_game(token)
     if game_id is None:
@@ -313,6 +320,7 @@ def match_game():
 
     expiration = datetime.datetime.now() + datetime.timedelta(hours=1)
     response = make_response(jsonify({"message": "GameStart"}), 200)
+    clock = 1
     response.set_cookie('game_id', game_id, max_age=3600, httponly=True, expires=expiration)
     return response
 

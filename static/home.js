@@ -193,6 +193,9 @@ function new_game() {
                     if (data.message === "GameStart") {
                         clearInterval(interval);
                         playGame();
+                    } else if(data.message === "no_opponent"){
+                        console.log("no opponent is found")
+                        return
                     } else {
                         console.log("Still waiting");
                     }
