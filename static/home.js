@@ -181,6 +181,7 @@ function profPic() {
 
 
 function new_game() {
+    alive = true
     function waitForGame() {
         var interval = setInterval(function() {
             fetch('/findGame', {
@@ -194,6 +195,8 @@ function new_game() {
                         playGame();
                     } else if(data.message === "no_opponent"){
                         console.log("no opponent is found")
+                        alive = false;
+                        clearInterval(interval);
                         return
                     } else {
                         console.log("Still waiting");
@@ -204,8 +207,10 @@ function new_game() {
                 });
         }, 3000);
     }
-
     waitForGame();
+    if (alive == false){
+        return 
+    }
 }
 
 function playGame() {
@@ -228,6 +233,7 @@ function playGame() {
                     clearInterval(interval)
                 } else if (data.message === "no_opponent") {
                     console.log("no opponent is found");
+                    return
                 }
                 else {
                     console.log("Waiting for game");
