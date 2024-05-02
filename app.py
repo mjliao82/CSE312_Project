@@ -328,8 +328,10 @@ def match_game():
     return response
 
 #polling is used to let the player know when it is their turn. When they send a poll request they also check if they have lost or tied
+clock = 1
 @app.route("/whosTurn", methods=['GET'])
 def get_turn():
+    global clock
     token = request.cookies.get('token')
     game_id = request.cookies.get('game_id')
     player = authenticity.findingUser(token)
@@ -344,9 +346,14 @@ def get_turn():
     current_turn = data["current_turn"]
     board = data["board"]
     if current_turn == player and (data['status'] == 'ongoing' or data['status'] == 'Continue'):
-        response = make_response(jsonify({"message": "Yes", "board":board}), 200)
+        response = make_response(jsonify({"message": "Yes", "board": board}), 200)
+        clock = 1
     else:
-        response = make_response(jsonify({"message": "No"}), 200)
+        if clock > 3:
+            response = make_response(jsonify({"message": "no_opponent"}), 200)
+        else:
+            response = make_response(jsonify({"message": "No"}), 200)
+            clock += 1
     return response
     
 

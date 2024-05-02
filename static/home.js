@@ -216,18 +216,21 @@ function playGame() {
                 console.log("Got the whos turn response: ", data);
                 if (data.message === "Yes") {
                     updateBoard(data.board)
-                } else if (data.message == "Lose"){
+                } else if (data.message === "Lose"){
                     updateBoard(data.board)
                      console.log("You Lost")
                      clearInterval(interval)
-                } else if (data.message == "Tie") {
+                } else if (data.message === "Tie") {
                     updateBoard(data.board)
                     console.log("There was a tie")
                     clearInterval(interval)
-                } else if (data.message == "Win") {
+                } else if (data.message === "Win") {
                     clearInterval(interval)
-                } else {
-                    console.log("It's not your turn, or a game isn't found yet")
+                } else if (data.message === "no_opponent") {
+                    console.log("no opponent is found");
+                }
+                else {
+                    console.log("Waiting for game");
                 }
             })
             .catch(error => {
