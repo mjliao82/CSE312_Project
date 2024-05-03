@@ -272,10 +272,19 @@ def upload_video():
         chat.postmsg(data)
     return redirect(url_for('homepage'))
 
+@app.route("/chekcing", methods=['POST'])
+def checkGameStatus():
+    if "game_id" in request.headers["Cookie"]:
+        response = make_response(jsonify({"message":"InGame"}))
+    else:
+        response = make_response(jsonify({"message":"LetEmPlay"}))
+    return response
+
 # Called on a click on a tile, then checks for board status
 @app.route("/move", methods=['POST'])
 def checker():
     cookies = request.headers["Cookie"]
+    print(request.headers)
     notClean = cookies.split("game_id=")[1]
     gameid = notClean.split(";")[0]
     notClean = cookies.split("token=")[1]
@@ -291,13 +300,19 @@ def checker():
         if status == "Win":
             #Change the board in the database to a status of win and show the winner of the game
             game_boards.update_one({'id': gameid}, {'$set': {'status': 'Win', 'players':{username:"Winner"}}})
-            return jsonify({'status': 'Win', 'message': 'Move played successfully', 'board':game_data["board"]})
+            response = make_response(jsonify({'status': 'Win', 'message': 'Move played successfully', 'board':game_data["board"]}))
+            response.set_cookie("game_id", max_age=-1)
+            return response
         elif status == "Tie":
             #Change game status to a tie
-            return jsonify({'status': 'Tie', 'message': 'Move played successfully', 'board':game_data["board"]})
+            game_boards.update_one({'id': gameid}, {'$set': {'status': 'Tie', 'players':{username:"Winner"}}})
+            response = make_response(jsonify({'status': 'Tie', 'message': 'Move played successfully', 'board':game_data["board"]}))
+            response.set_cookie("game_id", max_age=-1)
+            return response
         else:
             #Keep status as continue
-            return jsonify({'status': 'Continue', 'message': 'Move played successfully', 'board':game_data["board"]})
+            response = make_response(jsonify({'status': 'Continue', 'message': 'Move played successfully', 'board':game_data["board"]}))
+            return response
     else:
         return jsonify({'status': 'InvalidMove', 'message': 'Attempting to move forbidden'})
 
@@ -352,9 +367,15 @@ def get_turn():
     if data['status'] == 'Win':
         #if they are no longer in the database they lost
         if player not in data['players']:
-            return make_response(jsonify({"message":"Lose", "board":data['board']}))
+            response = make_response(jsonify({"message":"Lose", "board":data['board']}))
+            game_boards.delete_one({"id":game_id})
+            response.set_cookie("game_id", max_age=-1)
+            return response
     elif data['status'] == 'Tie':
-        return make_response(jsonify({"message":"Tie", "board":data['board']}))
+        response = make_response(jsonify({"message":"Tie", "board":data['board']}))
+        game_boards.delete_one({"id":game_id})
+        response.set_cookie("game_id", max_age=-1)
+        return response
     current_turn = data["current_turn"]
     board = data["board"]
     if current_turn == player and (data['status'] == 'ongoing' or data['status'] == 'Continue'):

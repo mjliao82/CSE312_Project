@@ -13,9 +13,15 @@
 
     </div>
     <div class="main">
-      <div class="col"></div>
+      <div class="col">
+        <div>
+          <p> Online Users: </p>
+          <p id="OnlineUsers"></p>
+        </div>
+      </div>
 
       <div class="col">
+        <h2 id="popUpText" class="popUpText"></h2>
         <div class="grid-holder">
           <div class="grid">
             <div id="block1" class="square" onClick="blockSelect(1)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
@@ -29,7 +35,7 @@
             <div id="block9" class="square" onclick="blockSelect(9)"> <h1 class="x">X</h1> <h1 class="o">O</h1> </div>
           </div>
           </div>
-            <button onclick="new_game()">Start Game</button>  
+            <button id = "StartButton" onclick="new_game()">Start Game</button>  
       </div>
 
       <div class="col">
@@ -70,10 +76,7 @@
       </div>
       </div>
 
-      <div>
-        <p> Online Users: </p>
-        <p id="OnlineUsers"></p>
-      </div>
+
       </div>
     </div>
 

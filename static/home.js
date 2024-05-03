@@ -175,13 +175,17 @@ function profPic() {
     const payload = document.getElementById("image-upload-form");
     const request = new XMLHttpRequest();
     request.open("POST", "/profPic");
-    request.setRequestHeader('Content-Type', 'image/jpg')
+    request.setRequestHeader('Content-Type', 'image/jpg');
     request.send(payload);
 }
 
 
 function new_game() {
     alive = true
+    document.getElementById("popUpText").innerText = "";
+    cleanUp();
+    document.getElementById("StartButton").style.display = 'none'
+    document.getElementById("popUpText").innerText = "Searching...";
     function waitForGame() {
         var interval = setInterval(function() {
             fetch('/findGame', {
@@ -194,7 +198,9 @@ function new_game() {
                         clearInterval(interval);
                         playGame();
                     } else if(data.message === "no_opponent"){
-                        console.log("no opponent is found")
+                        document.getElementById("popUpText").innerText = "No Game Found Brother";
+                        document.getElementById("StartButton").style.display = 'block'
+                        console.log("no opponent is found");
                         alive = false;
                         clearInterval(interval);
                         return
@@ -213,6 +219,16 @@ function new_game() {
     }
 }
 
+function cleanUp() {
+    document.getElementById("popUpText").innerHTML = "";
+    for (let num = 1; num <= 9; num++) {
+        block = document.getElementById("block" + String(num));
+        block.querySelector('.x').style.display = 'none';
+        block.querySelector('.o').style.display = 'none';
+    }
+    return
+}
+
 function playGame() {
     let interval = setInterval(function () {
         fetch('/whosTurn')
@@ -221,18 +237,29 @@ function playGame() {
                 console.log("Got the whos turn response: ", data);
                 if (data.message === "Yes") {
                     updateBoard(data.board)
+                    document.getElementById("popUpText").innerText = "Your Turn";
                 } else if (data.message === "Lose"){
                     updateBoard(data.board)
+                     document.getElementById("popUpText").innerText = "Lol You Lost";
+                     document.getElementById("StartButton").style.display = 'block'
                      console.log("You Lost")
                      clearInterval(interval)
+                     return
                 } else if (data.message === "Tie") {
                     updateBoard(data.board)
+                    document.getElementById("popUpText").innerText = "Y'all Tied";
+                    document.getElementById("StartButton").style.display = 'block'
                     console.log("There was a tie")
                     clearInterval(interval)
+                    return
                 } else if (data.message === "Win") {
+                    document.getElementById("popUpText").innerText = "You Win!";
+                    document.getElementById("StartButton").style.display = 'block'
                     clearInterval(interval)
+                    return
                 } else if (data.message === "no_opponent") {
                     console.log("no opponent is found");
+                    clearInterval(interval)
                     return
                 }
                 else {
@@ -261,23 +288,16 @@ function blockSelect(position) {
         if (data.status === 'Continue') {
             console.log('Game continues');
             updateBoard(data.board);
-            // pos = data.Position
-            // console.log(pos)
-            // team = data.Team
-            // console.log(team)
-            // block = document.getElementById("block" + pos)
-            // xelem = block.querySelector(".x");
-            // oelem = block.querySelector(".o");
-            // if (team == "X") {
-            //     xelem.style.display = "block";
-            // } else {
-            //     oelem.style.display = "block";
-            // }
+            document.getElementById("popUpText").innerText = "Opponents Turn";
         } else if (data.status == "Win") {
             updateBoard(data.board)
+            document.getElementById("popUpText").innerText = "You Win!";
+            document.getElementById("StartButton").style.display = 'block'
             console.log('You won');
         } else if (data.status == "Tie") {
             updateBoard(data.board)
+            document.getElementById("popUpText").innerText = "Y'all Tied";
+            document.getElementById("StartButton").style.display = 'block'
             console.log("Tie")
         } else {
             console.log("Game is not ongoing or continuing")

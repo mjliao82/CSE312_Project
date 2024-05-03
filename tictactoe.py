@@ -37,11 +37,6 @@ def check_winner(name, boardID):
     game_data = game_boards.find_one({"id": boardID})
     board = game_data["board"]
 
-    print("check tie statements")
-    if "0" not in board[0] and "0" not in board[1] and '0' not in board[2]:
-        #game_boards.delete_one({"id": boardID})
-        return "Tie"
-
     print("check win")
     if (board[0][0] == board[1][1] == board[2][2] and board[0][0] != '0') or \
             (board[0][2] == board[1][1] == board[2][0] and board[0][2] != '0'):
@@ -61,6 +56,12 @@ def check_winner(name, boardID):
             #game_boards.delete_one({"id": boardID}).
             return "Win"
         col += 1
+
+    print("check tie statements")
+    if "0" not in board[0] and "0" not in board[1] and '0' not in board[2]:
+        #game_boards.delete_one({"id": boardID})
+        return "Tie"
+        
     print("returning continue")
     return "Continue"
 

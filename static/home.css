@@ -122,6 +122,9 @@
 .square .x, .square .o {
   display: none;
 }
+.popUpText {
+  text-align: center;
+}
 
 .header {
   /*background-color: cornflowerblue;*/
