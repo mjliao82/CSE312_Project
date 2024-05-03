@@ -346,6 +346,6 @@ function welcome() {
     updateChat();
     // updateDM();
 
-    // setInterval(updateChat, 30000);
+    setInterval(updateChat, 30000);
     setInterval(fetchonline, 10000);
 }
