@@ -1,5 +1,11 @@
 Link to app: tic-tac-toe.us 
 
+1. Register and Log In to play!
+2. Click the 'Start Game' button to start matchmaking.
+3. If there are other players online and searching, you will be matched with someone to play with.
+4. If there are no players online, your matchmaking will eventually timeout since no one was found.
+
+
 Dark Mode Feature !
 
 To test feature:
